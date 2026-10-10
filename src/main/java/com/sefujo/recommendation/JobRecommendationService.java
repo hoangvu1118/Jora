@@ -5,14 +5,11 @@ import com.sefujo.recommendation.dto.JobReccommendGenerationResponse;
 import com.sefujo.recommendation.dto.JobRecommendationResponse;
 import com.sefujo.searchprofile.SearchProfile;
 import com.sefujo.searchprofile.SearchProfileService;
-import com.sefujo.user.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,7 +18,6 @@ public class JobRecommendationService {
     private final JobRecommendationRepository jobRecommendationRepository;
     private final JobCandidateService jobCandidateService;
     private final JobMatchingStrategy jobMatchingStrategy;
-    private final UserService userService;
     private SearchProfileService searchProfileService;
 
     @Value("${job.matchScore.threshold}")
@@ -55,9 +51,7 @@ public class JobRecommendationService {
 //
 //    }
 
-    public JobReccommendGenerationResponse generateRecommendations() {
-        long userId = userService.getCurrentUserId();
-        SearchProfile searchProfile = searchProfileService.getSearchProfileByUSerID(userId);
+    public JobReccommendGenerationResponse generateRecommendations(SearchProfile searchProfile) {
         List<Job> jobs = jobCandidateService.findCandidates(searchProfile);
         int totalCandidates = 0;
         int totalRecommendations = 0;
