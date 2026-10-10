@@ -8,12 +8,22 @@ CREATE TABLE job_recommendation (
 
       match_reason VARCHAR(1000),
 
-      status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+      status VARCHAR(50) NOT NULL DEFAULT 'NEW',
 
       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
       CONSTRAINT unique_searchProfile_jobId
-          UNIQUE (search_profile_id, job_id)
+          UNIQUE (search_profile_id, job_id),
+
+      CONSTRAINT fk_search_profile
+          FOREIGN KEY  (search_profile_id)
+              REFERENCES search_profiles(id),
+
+      CONSTRAINT fk_job
+          FOREIGN KEY (job_id)
+              REFERENCES jobs(id),
+
+
 
 );
