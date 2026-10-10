@@ -11,4 +11,6 @@ public interface JobRecommendationRepository extends JpaRepository<JobRecommenda
             SearchProfile searchProfile,
             Job job
     );
+
+
 }

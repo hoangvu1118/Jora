@@ -6,6 +6,8 @@ import com.sefujo.searchprofile.SearchProfile;
 import com.sefujo.searchprofile.SearchProfileService;
 import com.sefujo.user.UserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,13 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class JobRecommendationService {
-    private JobRecommendationRepository jobRecommendationRepository;
-    private JobCandidateService jobCandidateService;
-    private JobMatchingStrategy jobMatchingStrategy;
-    private UserService userService;
+    private final JobRecommendationRepository jobRecommendationRepository;
+    private final JobCandidateService jobCandidateService;
+    private final JobMatchingStrategy jobMatchingStrategy;
+    private final UserService userService;
     private SearchProfileService searchProfileService;
+
+    @Value("${job.matchScore.threshold}")
+    private int jobScoreThreshold;
 
     private JobRecommendation persistRecommendation(SearchProfile profile, MatchResult matchResult, Job job) {
         JobRecommendation jobRecommendation = jobRecommendationRepository
@@ -54,8 +59,7 @@ public class JobRecommendationService {
         for(Job job : jobs){
             MatchResult result = jobMatchingStrategy.score(searchProfile, job);
 
-
-            if(result.getScore() >= 20){
+            if(result.getScore() >= jobScoreThreshold){
                 JobRecommendation jobRcm = persistRecommendation(searchProfile, result, job);
                 jobRecommendationResponseList.add(jobRcm);
             }

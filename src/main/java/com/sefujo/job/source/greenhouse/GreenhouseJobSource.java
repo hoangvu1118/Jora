@@ -36,7 +36,7 @@ public class GreenhouseJobSource implements JobSource {
                 .uri("/v1/boards/{boardToken}/jobs", boardToken)
                 .retrieve()
                 .bodyToMono(GreenhouseJobsResponse.class)
-                .block();
+                .block(); // make the method synchronous
 
         if (response == null || response.jobs() == null) {
             throw new IllegalStateException(
