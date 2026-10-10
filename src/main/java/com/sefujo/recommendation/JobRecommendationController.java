@@ -6,6 +6,7 @@ import com.sefujo.recommendation.dto.UpdateRecommendationStatusRequest;
 import com.sefujo.searchprofile.SearchProfile;
 import com.sefujo.searchprofile.SearchProfileService;
 import com.sefujo.user.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class JobRecommendationController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateJobRecommendationStatus(@PathVariable int id, @RequestBody UpdateRecommendationStatusRequest request){
+    public ResponseEntity<Void> updateJobRecommendationStatus(@PathVariable int id, @Valid @RequestBody UpdateRecommendationStatusRequest request){
         SearchProfile profile = jobRecommendationService.findSearchProfile();
         jobRecommendationService.updateRecommendationStatus(profile.getId(), id, request.getRecommendationStatus());
         return ResponseEntity.noContent().build();

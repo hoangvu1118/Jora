@@ -8,7 +8,6 @@ import lombok.Data;
 
 @Data
 public class UpdateRecommendationStatusRequest {
-    @Valid
     @NotNull
     public RecommendationStatus recommendationStatus;
 }
