@@ -22,8 +22,5 @@ CREATE TABLE job_recommendation (
 
       CONSTRAINT fk_job
           FOREIGN KEY (job_id)
-              REFERENCES jobs(id),
-
-
-
+              REFERENCES jobs(id)
 );

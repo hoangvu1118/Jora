@@ -26,7 +26,7 @@ public class CustomUserDetail implements UserDetails {
         this.role = user.getRole();
         this.password = user.getPassword();
         this.authorities = List.of(
-                new SimpleGrantedAuthority("ROLE_USER")
+                new SimpleGrantedAuthority(user.getRole() != null ? "ROLE_" + user.getRole().toUpperCase() : "ROLE_USER")
         );
     }
 
