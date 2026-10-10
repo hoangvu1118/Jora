@@ -1,6 +1,7 @@
 package com.sefujo.recommendation;
 
 import com.sefujo.job.entity.Job;
+import com.sefujo.recommendation.dto.JobReccommendGenerationResponse;
 import com.sefujo.recommendation.dto.JobRecommendationResponse;
 import com.sefujo.searchprofile.SearchProfile;
 import com.sefujo.searchprofile.SearchProfileService;
@@ -50,22 +51,30 @@ public class JobRecommendationService {
         return jobRecommendationRepository.save(jobRecommendation);
     }
 
-    public JobRecommendationResponse generateRecommendations() {
+//    private JobRecommendationResponse handleJobRecResponse(JobRecommendation jobRecommendation) {
+//
+//    }
+
+    public JobReccommendGenerationResponse generateRecommendations() {
         long userId = userService.getCurrentUserId();
         SearchProfile searchProfile = searchProfileService.getSearchProfileByUSerID(userId);
         List<Job> jobs = jobCandidateService.findCandidates(searchProfile);
-
-        List<JobRecommendation> jobRecommendationResponseList = new ArrayList<>();
+        int totalCandidates = 0;
+        int totalRecommendations = 0;
         for(Job job : jobs){
             MatchResult result = jobMatchingStrategy.score(searchProfile, job);
 
             if(result.getScore() >= jobScoreThreshold){
-                JobRecommendation jobRcm = persistRecommendation(searchProfile, result, job);
-                jobRecommendationResponseList.add(jobRcm);
+                persistRecommendation(searchProfile, result, job);
+                totalRecommendations++;
             }
+            totalCandidates++;
         }
-        JobRecommendationResponse response = new JobRecommendationResponse();
-        response.setJobRecommendations(jobRecommendationResponseList);
+        JobReccommendGenerationResponse response = new JobReccommendGenerationResponse();
+        response.setTotalRecommendationsSaved(totalRecommendations);
+        response.setTotalCandidatesScored(totalCandidates);
         return response;
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.sefujo.recommendation;
 
+import com.sefujo.recommendation.dto.JobReccommendGenerationResponse;
 import com.sefujo.recommendation.dto.JobRecommendationResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,8 @@ public class JobRecommendationController {
     JobRecommendationService jobRecommendationService;
 
     @PostMapping
-    public ResponseEntity<JobRecommendationResponse> generateJobRecommendation() {
-        JobRecommendationResponse jobRecommendationResponse = jobRecommendationService.generateRecommendations();
-        return  ResponseEntity.ok(jobRecommendationResponse);
+    public ResponseEntity<JobReccommendGenerationResponse> generateJobRecommendation() {
+        JobReccommendGenerationResponse response = jobRecommendationService.generateRecommendations();
+        return  ResponseEntity.ok(response);
     }
 }
