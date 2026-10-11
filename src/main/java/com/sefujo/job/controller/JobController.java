@@ -41,7 +41,7 @@ public class JobController {
             throw new InvalidCursorException("lastCreated and lastId must be sent together");
         }
         if (lastCreated != null && lastId == null) {
-            throw new InvalidCursorException("lastScore and lastId must be sent together");
+            throw new InvalidCursorException("lastCreated and lastId must be sent together");
         }
         return ResponseEntity.ok(
                 jobService.getJobs(title, employmentType, workplaceType, location, lastCreated, lastId, size)

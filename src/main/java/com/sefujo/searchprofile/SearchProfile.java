@@ -3,6 +3,8 @@ package com.sefujo.searchprofile;
 import com.sefujo.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,7 +13,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name="search_profiles")
 public class SearchProfile {
     @Id
@@ -26,6 +29,7 @@ public class SearchProfile {
     private String name;
 
     @Column(name="level")
+    @Enumerated(EnumType.STRING)
     private String level; // e.g Intern, Fresher, etc.
 
     @Column(name = "created_at")

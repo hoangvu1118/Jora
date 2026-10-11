@@ -4,12 +4,15 @@ import com.sefujo.job.entity.Job;
 import com.sefujo.searchprofile.SearchProfile;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
 public class JobRecommendation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,12 +4,15 @@ import com.sefujo.searchprofile.EmploymentType;
 import com.sefujo.searchprofile.WorkplaceType;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Table(name = "jobs")
 @Entity
-@Data
+@Getter
+@Setter
 public class Job {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

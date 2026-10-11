@@ -2,6 +2,8 @@ package com.sefujo.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,7 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="users")
-@Data
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
