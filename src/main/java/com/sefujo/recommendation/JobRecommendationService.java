@@ -15,7 +15,6 @@ import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,6 @@ public class JobRecommendationService {
         JobRecommendation jobRecommendation = jobRecommendationRepository.findByIdAndSearchProfileId(recommendationId, profileId)
                 .orElseThrow(() -> new ResourceNotFound("Recommendation not found with id " + recommendationId));
         jobRecommendation.setStatus(newStatus);
-        jobRecommendation.setUpdatedAt(LocalDateTime.now());
         jobRecommendationRepository.save(jobRecommendation);
     }
 
@@ -53,7 +51,6 @@ public class JobRecommendationService {
         Map<Long, JobRecommendation> existingByJobId = jobRecommendationRepository.findBySearchProfile(searchProfile)
                 .stream()
                 .collect(Collectors.toMap(rec -> rec.getJob().getId(), rec -> rec));
-        LocalDateTime now = LocalDateTime.now();
         List<JobRecommendation> toSave = new ArrayList<>();
 
         for(Job job : jobs){
@@ -66,12 +63,10 @@ public class JobRecommendationService {
                 jobRecommendation =  new JobRecommendation();
                 jobRecommendation.setSearchProfile(searchProfile);
                 jobRecommendation.setJob(job);
-                jobRecommendation.setCreatedAt(now);
                 jobRecommendation.setStatus(RecommendationStatus.NEW);
             }
             jobRecommendation.setMatchScore(result.getScore());
             jobRecommendation.setMatchReasons(result.getReasons());
-            jobRecommendation.setUpdatedAt(now);
             toSave.add(jobRecommendation);
         }
         jobRecommendationRepository.saveAll(toSave);

@@ -18,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -46,7 +45,6 @@ public class AuthService {
 
     public UserResponse register(@Valid @RequestBody RegisterRequest request) {
         // 1. check if email exists
-        LocalDateTime now = LocalDateTime.now();
         if(userRepository.existsByEmail((request.getEmail()))){
             throw new EmailAlreadyExistsException("email","This Email is already registered");
         }
@@ -56,8 +54,6 @@ public class AuthService {
 
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole("USER");
-        newUser.setCreatedAt(now);
-        newUser.setUpdatedAt(now);
 
         // 3. save to database
         User saveUser = userRepository.save(newUser);

@@ -12,7 +12,6 @@ import com.sefujo.job.source.greenhouse.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +32,6 @@ public class JobIngestionService {
                     Company company = new Company();
                     company.setName(name);
                     company.setWebsite(website);
-                    company.setCreatedAt(LocalDateTime.now());
-                    company.setUpdatedAt(LocalDateTime.now());
                     return companyRepository.save(company);
                 });
     }
@@ -44,8 +41,6 @@ public class JobIngestionService {
                     Platform platform = new Platform();
                     platform.setName(name);
                     platform.setWebsite(website);
-                    platform.setCreatedAt(LocalDateTime.now());
-                    platform.setUpdatedAt(LocalDateTime.now());
                     return platformRepository.save(platform);
                 });
     }
