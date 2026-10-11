@@ -30,7 +30,7 @@ public class SearchProfile {
 
     @Column(name="level")
     @Enumerated(EnumType.STRING)
-    private String level; // e.g Intern, Fresher, etc.
+    private EmploymentLevel level; // e.g Intern, Fresher, etc.
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
