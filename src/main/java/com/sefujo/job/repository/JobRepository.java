@@ -27,4 +27,7 @@ public interface JobRepository extends JpaRepository<Job,Long>, JpaSpecification
     Optional<Job> findById(long id);
     // Find the matching job
     Optional<Job> findByCompanyAndNormalizedTitleAndLocation(Company company, String normalizedTitle, String location);
+
+
+
 }

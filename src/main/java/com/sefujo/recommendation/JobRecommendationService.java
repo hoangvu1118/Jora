@@ -105,7 +105,7 @@ public class JobRecommendationService {
     }
 
     public RecommendationPage getRecommendations(long profileId, Integer lastScore, Long lastId, int size) {
-        List<JobRecommendation> recommendations = fetchRows(profileId, lastScore, lastId, size);
+        List<JobRecommendation> recommendations = fetchRows(profileId, lastScore, lastId, size + 1);
         boolean hasNext =  recommendations.size() > size;
         if(hasNext){
             recommendations = recommendations.subList(0, size);
