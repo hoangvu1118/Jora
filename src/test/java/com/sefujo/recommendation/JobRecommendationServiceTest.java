@@ -86,7 +86,7 @@ class JobRecommendationServiceTest {
         // The bookmark must be row 3 (903), not the extra row 4 (455),
         // otherwise row 455 would be skipped on the next page.
         assertThat(page.lastScore()).isEqualTo(60);
-        assertThat(page.nextId()).isEqualTo(903L);
+        assertThat(page.lastId()).isEqualTo(903L);
     }
 
     @Test
@@ -102,7 +102,7 @@ class JobRecommendationServiceTest {
         assertThat(page.hasNext()).isFalse();
         assertThat(page.items()).hasSize(3);
         assertThat(page.lastScore()).isNull();
-        assertThat(page.nextId()).isNull();
+        assertThat(page.lastId()).isNull();
     }
 
     @Test
@@ -114,7 +114,7 @@ class JobRecommendationServiceTest {
         assertThat(page.items()).isEmpty();
         assertThat(page.hasNext()).isFalse();
         assertThat(page.lastScore()).isNull();
-        assertThat(page.nextId()).isNull();
+        assertThat(page.lastId()).isNull();
     }
 
     @Test
