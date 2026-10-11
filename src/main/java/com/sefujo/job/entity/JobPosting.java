@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Table(name="job_postings")
-@Data
+@Entity
 @Getter
 @Setter
 public class JobPosting {

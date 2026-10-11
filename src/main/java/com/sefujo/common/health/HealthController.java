@@ -1,6 +1,7 @@
 package com.sefujo.common.health;
 
 import com.sefujo.common.security.CustomUserDetail;
+import com.sefujo.searchprofile.EmploymentLevel;
 import com.sefujo.searchprofile.SearchProfile;
 import com.sefujo.searchprofile.SearchProfileRepository;
 import com.sefujo.user.User;
@@ -42,7 +43,7 @@ public class HealthController {
             User user = userRepository.findById(userId).orElse(null);
             SearchProfile searchProfile = new SearchProfile();
             searchProfile.setName("test");
-            searchProfile.setLevel("INTERN");
+            searchProfile.setLevel(EmploymentLevel.INTERN);
             searchProfile.setCreatedAt(now);
             searchProfile.setUpdatedAt(now);
             searchProfile.setUser(user);

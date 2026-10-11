@@ -1,5 +1,6 @@
 package com.sefujo.searchprofile.dto;
 
+import com.sefujo.searchprofile.EmploymentLevel;
 import com.sefujo.searchprofile.EmploymentType;
 import com.sefujo.searchprofile.WorkplaceType;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.Set;
 public class SearchProfileResponse {
     private Long Id;
     private String name;
-    private String level;
+    private EmploymentLevel level;
     private Set<String> jobTitles;
     private Set<String> skills;
     private Set<String> locations;
