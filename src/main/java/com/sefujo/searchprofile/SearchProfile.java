@@ -2,9 +2,10 @@ package com.sefujo.searchprofile;
 
 import com.sefujo.user.User;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,12 +30,13 @@ public class SearchProfile {
     private String name;
 
     @Column(name="level")
-    @Enumerated(EnumType.STRING)
     private String level; // e.g Intern, Fresher, etc.
 
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 

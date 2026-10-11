@@ -1,14 +1,15 @@
 package com.sefujo.job.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+@Entity
 @Table(name="job_postings")
-@Data
 @Getter
 @Setter
 public class JobPosting {
@@ -41,8 +42,10 @@ public class JobPosting {
     private LocalDateTime lastSeenAt; // When the crawler most recently confirmed the posting still exists
     @Column(name="closed_at")
     private LocalDateTime closedAt; // Determine when the posting is closed
-    @Column(name="created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt; // When the instance was first created in the database
-    @Column(name="updated_at")
+    @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt; // When the instance was most recently modified in the database
 }

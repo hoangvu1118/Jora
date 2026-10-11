@@ -56,8 +56,6 @@ public class JobPostingPersistenceService {
         jobPosting.setExternalJobId(raw.externalId());
         jobPosting.setSourceUrl(raw.sourceUrl());
         jobPosting.setPlatform(platform);
-        jobPosting.setCreatedAt(LocalDateTime.now());
-        jobPosting.setUpdatedAt(LocalDateTime.now());
         jobPosting.setSourcePublishedAt(raw.sourcePublishedAt());
         jobPosting.setFirstSeenAt(LocalDateTime.now());
         jobPosting.setLastSeenAt(LocalDateTime.now());

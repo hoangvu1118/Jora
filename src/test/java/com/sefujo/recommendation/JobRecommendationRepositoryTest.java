@@ -43,8 +43,6 @@ class JobRecommendationRepositoryTest {
     void setUp() {
         company = new Company();
         company.setName("Acme");
-        company.setCreatedAt(LocalDateTime.now());
-        company.setUpdatedAt(LocalDateTime.now());
         entityManager.persist(company);
 
         profile = persistProfile("owner@test.com");
@@ -148,15 +146,11 @@ class JobRecommendationRepositoryTest {
         user.setEmail(email);
         user.setPassword("hash");
         user.setRole("USER");
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
         entityManager.persist(user);
 
         SearchProfile searchProfile = new SearchProfile();
         searchProfile.setUser(user);
         searchProfile.setName("profile of " + email);
-        searchProfile.setCreatedAt(LocalDateTime.now());
-        searchProfile.setUpdatedAt(LocalDateTime.now());
         entityManager.persist(searchProfile);
         return searchProfile;
     }
@@ -177,8 +171,6 @@ class JobRecommendationRepositoryTest {
         rec.setMatchScore(score);
         rec.setStatus(status);
         rec.setMatchReasons(Set.of(MatchReason.TITLE_MATCH));
-        rec.setCreatedAt(LocalDateTime.now());
-        rec.setUpdatedAt(LocalDateTime.now());
         entityManager.persist(rec);
         return rec;
     }
