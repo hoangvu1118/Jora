@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface JobRepository extends JpaRepository<Job,Long>, JpaSpecificationExecutor<Job> {
     @Override
     @EntityGraph(attributePaths = "company")
-    List<Job> findAll(
+    List<Job> findAll( // temporarily no need since the BatchSize can fetch the company in the memory
             Specification<Job> spec,
             Sort sort
     );

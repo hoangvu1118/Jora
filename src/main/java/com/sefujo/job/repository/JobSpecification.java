@@ -5,6 +5,7 @@ import com.sefujo.searchprofile.EmploymentType;
 import com.sefujo.searchprofile.WorkplaceType;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 // Specification reduces the amount of COMBINATION written in Repository
@@ -12,6 +13,19 @@ import java.util.Set;
 // CB: CriteriaBuilder : create conditions like =, Like, AND, OR
 
 public class JobSpecification {
+
+    public static Specification<Job> isAfterCursor(LocalDateTime lastCreated, Long lastId) {
+        return (root, query, cb) ->
+                lastCreated == null
+                    ? cb.conjunction() // means 'TRUE', accept to return TRUE
+                    : cb.or(
+                            cb.lessThan(root.<LocalDateTime>get("createdDate"), lastCreated),
+                            cb.and(
+                                    cb.equal(root.<LocalDateTime>get("createdDate"), lastCreated),
+                                    cb.lessThan(root.<Long>get("id"), lastId)
+                            )
+                    );
+    }
     public static Specification<Job> isOpen() {
         return (root, query, cb) ->
                 cb.equal(root.get("status"), "open");

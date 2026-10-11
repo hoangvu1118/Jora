@@ -116,14 +116,14 @@ public class JobRecommendationService {
             responseItems.add(toResponse(recommendation));
         }
 
-        Integer nextScore = null;
-        Long nextId = null;
-        if(hasNext) {
+        Integer pageLastScore = null;
+        Long pageLastId = null;
+        if (hasNext) {
             JobRecommendation lastRow = recommendations.get(recommendations.size() - 1);
-            nextScore = lastRow.getMatchScore();
-            nextId = lastRow.getId();
+            pageLastScore = lastRow.getMatchScore();
+            pageLastId = lastRow.getId();
         }
-        return new RecommendationPage(responseItems, hasNext, nextScore, nextId);
+        return new RecommendationPage(responseItems, hasNext, pageLastScore, pageLastId);
 
     }
 

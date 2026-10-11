@@ -85,7 +85,7 @@ class JobRecommendationServiceTest {
                 .containsExactly(812L, 640L, 903L);
         // The bookmark must be row 3 (903), not the extra row 4 (455),
         // otherwise row 455 would be skipped on the next page.
-        assertThat(page.nextScore()).isEqualTo(60);
+        assertThat(page.lastScore()).isEqualTo(60);
         assertThat(page.nextId()).isEqualTo(903L);
     }
 
@@ -101,7 +101,7 @@ class JobRecommendationServiceTest {
 
         assertThat(page.hasNext()).isFalse();
         assertThat(page.items()).hasSize(3);
-        assertThat(page.nextScore()).isNull();
+        assertThat(page.lastScore()).isNull();
         assertThat(page.nextId()).isNull();
     }
 
@@ -113,7 +113,7 @@ class JobRecommendationServiceTest {
 
         assertThat(page.items()).isEmpty();
         assertThat(page.hasNext()).isFalse();
-        assertThat(page.nextScore()).isNull();
+        assertThat(page.lastScore()).isNull();
         assertThat(page.nextId()).isNull();
     }
 
