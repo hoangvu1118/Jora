@@ -17,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 
 @Service
@@ -43,7 +42,6 @@ public class SearchProfileService {
 
     public SearchProfileResponse createSearchProfile(CreateSearchProfileRequest request) {
 
-        LocalDateTime now = LocalDateTime.now();
         long userId = userService.getCurrentUserId();
 
         SearchProfile searchProfileCheck = searchProfileRepository.findByUserId(userId).orElse(null);
@@ -53,20 +51,18 @@ public class SearchProfileService {
 
         User currentUser = userService.getUserById(userId);
 
-        SearchProfile searchProfile = getSearchProfile(request, currentUser, now);
+        SearchProfile searchProfile = getSearchProfile(request, currentUser);
 
         SearchProfile saved = searchProfileRepository.save(searchProfile);
 
         return getSearchProfileResponse(saved);
     }
 
-    private static SearchProfile getSearchProfile(CreateSearchProfileRequest request, User currentUser, LocalDateTime now) {
+    private static SearchProfile getSearchProfile(CreateSearchProfileRequest request, User currentUser) {
         SearchProfile searchProfile = new SearchProfile();
         searchProfile.setUser(currentUser);
         searchProfile.setName(request.getName());
         searchProfile.setLevel(request.getLevel());
-        searchProfile.setCreatedAt(now);
-        searchProfile.setUpdatedAt(now);
         searchProfile.setEmploymentTypes(request.getEmploymentTypes());
         searchProfile.setJobTitles(request.getJobTitles());
         searchProfile.setLocations(request.getLocations());
@@ -90,7 +86,6 @@ public class SearchProfileService {
     }
 
     public SearchProfileResponse updateSearchProfile(UpdateSearchProfileRequest request) {
-        LocalDateTime now = LocalDateTime.now();
         long userId = userService.getCurrentUserId();
         SearchProfile profile = searchProfileRepository.findByUserId(userId).orElse(null);
         if (profile == null) {

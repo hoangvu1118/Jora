@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @RestController
@@ -33,7 +32,6 @@ public class HealthController {
 
     @PostMapping("/test/searchProfile")
     public Map<String, String> test() {
-        LocalDateTime now = LocalDateTime.now();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
@@ -43,8 +41,6 @@ public class HealthController {
             SearchProfile searchProfile = new SearchProfile();
             searchProfile.setName("test");
             searchProfile.setLevel("INTERN");
-            searchProfile.setCreatedAt(now);
-            searchProfile.setUpdatedAt(now);
             searchProfile.setUser(user);
             searchProfileRepository.save(searchProfile);
         }
