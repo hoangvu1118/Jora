@@ -36,6 +36,11 @@ public class Resume {
     private LocalDateTime createdAt;
 
     public Resume(User user, String key, @Nullable String fileName, long fileSize, @Nullable String contentType) {
+        this.user = user;
+        this.fileName = fileName;
+        this.fileSize = fileSize;
+        this.filePath = key;
+        this.contentType = contentType;
     }
 
     public Resume() {

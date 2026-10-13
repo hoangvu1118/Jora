@@ -19,10 +19,13 @@ public class ResumeService {
 
 
     private UploadResumeResponse toResponse(Resume resume) {
-        UploadResumeResponse response = new UploadResumeResponse();
-        response.setFileName(resume.getFileName());
-        response.setFileType(resume.getContentType());
-        response.setFileSize(resume.getFileSize());
+        long resumeId = resume.getId();
+        String fileName = resume.getFileName();
+        Long fileSize = resume.getFileSize();
+        String fileType = resume.getContentType();
+        UploadResumeResponse response = new UploadResumeResponse(
+                resumeId, fileName, fileSize, fileType
+        );
         return response;
     }
 
