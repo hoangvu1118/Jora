@@ -17,7 +17,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FileReadingException.class)
     public ProblemDetail handleFileReadingException(FileReadingException ex) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+        log.error("Cannot read this file", ex);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT,
+                "Could not read the file, please try again later");
     }
 
     @ExceptionHandler(InvalidFileException.class)

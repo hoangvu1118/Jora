@@ -25,7 +25,7 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/{id}/extract")
+    @PostMapping("/{resumeId}/extract")
     public ResponseEntity<String> extractResume(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
         String rawText = resumeService.extractResume(userId, resumeId);
