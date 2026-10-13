@@ -1,7 +1,7 @@
 package com.sefujo.resume.entity;
 
 import com.sefujo.job.entity.Job;
-import com.sefujo.resume.ResumeContent;
+import com.sefujo.resume.content.ResumeContent;
 import com.sefujo.resume.ResumeVersionStatus;
 import com.sefujo.resume.ResumeVersionType;
 import jakarta.persistence.*;
