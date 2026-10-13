@@ -18,7 +18,7 @@ public class PdfBoxResumeExtractor implements ResumeExtractor {
         try (PDDocument document = Loader.loadPDF(pdf.readAllBytes())) {
             return new PDFTextStripper().getText(document);
         } catch (IOException e) {
-            throw new FileReadingException(e.getMessage());
+            throw new FileReadingException("Cannot read the file", e);
         }
     }
 }
