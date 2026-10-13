@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.reactive.result.method.annotation.ResponseEntityExceptionHandler;
+
 import java.time.Instant;
 
 @RestControllerAdvice
 @Slf4j
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<ErrorResponse> handleFileStorageException(FileStorageException e){
@@ -19,17 +21,6 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 status.value(),
                 "Could not process the file, please try again later",
-                Instant.now()
-        );
-        return new ResponseEntity<>(errorResponse, status);
-    }
-
-    @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorResponse> handleMethodValidation(HandlerMethodValidationException e){
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                e.getMessage(),
                 Instant.now()
         );
         return new ResponseEntity<>(errorResponse, status);
@@ -48,11 +39,11 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<ErrorResponse> handleEmailExistException(ConflictException e) {
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException e) {
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorResponse errorResponse = new ErrorResponse(
                 status.value(),
-                "Please try again with different data",
+                e.getMessage(),
                 Instant.now()
         );
         return ResponseEntity.status(status).body(errorResponse);
