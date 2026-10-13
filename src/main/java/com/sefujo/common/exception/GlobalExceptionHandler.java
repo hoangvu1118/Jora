@@ -47,6 +47,28 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleEmailExistException(ConflictException e) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        ErrorResponse errorResponse = new ErrorResponse(
+                status.value(),
+                "Please try again with different data",
+                Instant.now()
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(UserNotAuthenticated.class)
+    public ResponseEntity<ErrorResponse> handleUserNotAuthenticatedException(UserNotAuthenticated e) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        ErrorResponse errorResponse = new ErrorResponse(
+                status.value(),
+                "User have not been logged",
+                Instant.now()
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
     @ExceptionHandler(ResourceNotFound.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFound e) {
         HttpStatus status = HttpStatus.NOT_FOUND;

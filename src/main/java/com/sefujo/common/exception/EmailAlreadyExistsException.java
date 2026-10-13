@@ -1,6 +1,6 @@
 package com.sefujo.common.exception;
 
-public class EmailAlreadyExistsException extends RuntimeException {
+public class EmailAlreadyExistsException extends ConflictException {
     private final String field;
 
     public EmailAlreadyExistsException(String field, String message) {
