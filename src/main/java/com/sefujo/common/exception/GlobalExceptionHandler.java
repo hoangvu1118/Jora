@@ -14,10 +14,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FileStorageException.class)
     public ResponseEntity<ErrorResponse> handleFileStorageException(FileStorageException e){
+        log.error("File storage failed", e);
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                e.getMessage(),
+                status.value(),
+                "Could not process the file, please try again later",
                 Instant.now()
         );
         return new ResponseEntity<>(errorResponse, status);
