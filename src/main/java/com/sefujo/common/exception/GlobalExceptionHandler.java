@@ -3,80 +3,49 @@ package com.sefujo.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.Instant;
-
+// Every error goes out as a ProblemDetail, the same shape Spring uses for its own 400/404/405.
+// 4xx: the user's fault, so show the real message.
+// 5xx: our fault, so log the details and show a generic message.
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(FileStorageException.class)
-    public ResponseEntity<ErrorResponse> handleFileStorageException(FileStorageException e){
-        log.error("File storage failed", e);
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        ErrorResponse errorResponse = new ErrorResponse(
-                status.value(),
-                "Could not process the file, please try again later",
-                Instant.now()
-        );
-        return new ResponseEntity<>(errorResponse, status);
-    }
-
     @ExceptionHandler(InvalidCursorException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCursorException(InvalidCursorException e) {
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                e.getMessage(),
-                Instant.now()
-        );
-        return ResponseEntity.status(status).body(errorResponse);
+    public ProblemDetail handleInvalidCursor(InvalidCursorException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
+    @ExceptionHandler(UserNotAuthenticated.class)
+    public ProblemDetail handleUserNotAuthenticated(UserNotAuthenticated e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "You need to log in first");
+    }
+
+    @ExceptionHandler(ResourceNotFound.class)
+    public ProblemDetail handleResourceNotFound(ResourceNotFound e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());
+    }
 
     @ExceptionHandler(ConflictException.class)
     public ProblemDetail handleConflict(ConflictException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, e.getMessage());
     }
 
-    @ExceptionHandler(UserNotAuthenticated.class)
-    public ResponseEntity<ErrorResponse> handleUserNotAuthenticatedException(UserNotAuthenticated e) {
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-        ErrorResponse errorResponse = new ErrorResponse(
-                status.value(),
-                "User have not been logged",
-                Instant.now()
-        );
-        return ResponseEntity.status(status).body(errorResponse);
-    }
-
-    @ExceptionHandler(ResourceNotFound.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFound e) {
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                e.getMessage(),
-                Instant.now()
-        );
-        return ResponseEntity.status(status).body(errorResponse);
+    @ExceptionHandler(FileStorageException.class)
+    public ProblemDetail handleFileStorage(FileStorageException e) {
+        log.error("File storage failed", e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Could not process the file, please try again later");
     }
 
     // Fallback for unexpected bugs
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        log.error("Unhandled exception", ex);
-        ErrorResponse error = new ErrorResponse(
-                status.value(),
-                "An unexpected internal error occurred",
-                Instant.now()
-        );
-
-        return ResponseEntity.status(status).body(error);
+    public ProblemDetail handleUnexpected(Exception e) {
+        log.error("Unhandled exception", e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected internal error occurred");
     }
-
 }
