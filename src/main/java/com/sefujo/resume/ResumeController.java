@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -26,5 +23,12 @@ public class ResumeController {
         long userId = userService.getCurrentUserId();
         UploadResumeResponse response = resumeService.uploadResume(userId, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/{id}/extract")
+    public ResponseEntity<String> extractResume(@PathVariable long resumeId) {
+        long userId = userService.getCurrentUserId();
+        String rawText = resumeService.extractResume(userId, resumeId);
+        return ResponseEntity.status(HttpStatus.OK).body(rawText);
     }
 }

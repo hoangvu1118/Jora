@@ -1,8 +1,10 @@
 package com.sefujo.resume;
 
 import com.sefujo.common.exception.InvalidFileException;
+import com.sefujo.common.exception.ResourceNotFound;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.resume.entity.Resume;
+import com.sefujo.resume.extractor.ResumeExtractor;
 import com.sefujo.storage.FileStorage;
 import com.sefujo.user.User;
 import com.sefujo.user.UserService;
@@ -11,13 +13,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
+
 @Component
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final FileStorage fileStorage;
     private final UserService userService;
-
+    private final ResumeExtractor resumeExtractor;
 
     private UploadResumeResponse toResponse(Resume resume) {
         long resumeId = resume.getId();
@@ -65,5 +69,15 @@ public class ResumeService {
         }
 
         return false;
+    }
+
+    public String extractResume(Long userId, Long resumeId) {
+        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        InputStream pdfStream = fileStorage.load(resume.getFilePath());
+        String rawText = resumeExtractor.extractResume(pdfStream);
+        resume.setRawText(rawText);
+        resumeRepository.saveAndFlush(resume);
+        return rawText;
     }
 }
