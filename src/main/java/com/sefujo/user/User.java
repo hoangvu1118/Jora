@@ -1,12 +1,13 @@
 package com.sefujo.user;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -28,9 +29,11 @@ public class User {
     @Column(name = "password_hash")
     private String password;
 
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
