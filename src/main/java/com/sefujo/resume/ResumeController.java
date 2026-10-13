@@ -25,11 +25,6 @@ public class ResumeController {
             ) {
         long userId = userService.getCurrentUserId();
         UploadResumeResponse response = resumeService.uploadResume(userId, file);
-
-        if(response == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

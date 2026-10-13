@@ -1,6 +1,7 @@
 package com.sefujo.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,6 +14,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @ExceptionHandler(InvalidFileException.class)
+    public ProblemDetail handleInvalidFileException(InvalidFileException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 
     @ExceptionHandler(InvalidCursorException.class)
     public ProblemDetail handleInvalidCursor(InvalidCursorException e) {

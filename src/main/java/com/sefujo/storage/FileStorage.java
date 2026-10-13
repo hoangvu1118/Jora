@@ -15,5 +15,4 @@ public interface FileStorage {
 
     void delete(String key);
 
-    boolean isValidPdf(MultipartFile file);
 }
