@@ -96,7 +96,7 @@ class JobRecommendationControllerTest {
     void onlyLastScore_returns400WithMessage() throws Exception {
         mockMvc.perform(get(URL).param("lastScore", "60"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("lastScore and lastId must be sent together"));
+                .andExpect(jsonPath("$.detail").value("lastScore and lastId must be sent together"));
     }
 
     @Test
