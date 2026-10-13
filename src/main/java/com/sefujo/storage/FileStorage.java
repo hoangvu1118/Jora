@@ -12,4 +12,8 @@ public interface FileStorage {
     String save(Long userId, MultipartFile file);
 
     InputStream load(String key);      // give key, get the file back
+
+    void delete(String key);
+
+    boolean isValidPdf(MultipartFile file);
 }

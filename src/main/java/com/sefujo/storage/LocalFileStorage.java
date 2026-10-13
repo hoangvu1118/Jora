@@ -48,4 +48,35 @@ public class LocalFileStorage implements FileStorage{
         }
     }
 
+    @Override
+    public void delete(String key) {
+        Path targetPath = rootFolder.resolve(key);
+        try{
+            Files.deleteIfExists(targetPath);
+        }  catch (IOException e){
+            throw new FileStorageException("Could not delete file " + key, e);
+        }
+    }
+
+    @Override
+    public boolean isValidPdf(MultipartFile file) {
+        // 1. Check for null and empty
+        if (file == null || file.isEmpty()) {
+            return false;
+        }
+
+        // 2. Check MIME type
+        String contentType = file.getContentType();
+        if (contentType != null && contentType.equals("application/pdf")) {
+            return true;
+        }
+
+        // Optional fallback: check file name extension if content type is missing/unreliable
+        String filename = file.getOriginalFilename();
+        if (filename != null && filename.toLowerCase().endsWith(".pdf")) {
+            return true;
+        }
+
+        return false;
+    }
 }

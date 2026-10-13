@@ -24,7 +24,7 @@ public class JobRecommendationController {
     private final UserService userService;
     private final SearchProfileService searchProfileService;
 
-    @PostMapping("/generate")
+    @PostMapping
     public ResponseEntity<JobRecommendGenerationResponse> generateJobRecommendation() {
         SearchProfile profile = jobRecommendationService.findSearchProfile();
         JobRecommendGenerationResponse response = jobRecommendationService.generateRecommendations(profile);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.jspecify.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
@@ -33,6 +34,13 @@ public class Resume {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    public Resume(User user, String key, @Nullable String fileName, long fileSize, @Nullable String contentType) {
+    }
+
+    public Resume() {
+
+    }
 
     public void archive() {
         this.archivedAt = LocalDateTime.now();
