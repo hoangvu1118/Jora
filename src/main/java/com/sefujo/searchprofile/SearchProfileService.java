@@ -43,8 +43,7 @@ public class SearchProfileService {
 
         long userId = userService.getCurrentUserId();
 
-        SearchProfile searchProfileCheck = searchProfileRepository.findByUserId(userId).orElse(null);
-        if (searchProfileCheck != null) {
+        if(searchProfileRepository.existsByUserId(userId)){
             throw new SearchProfileAlreadyExist("Search Profile Already Exist, please Edit/ Delete the previous version");
         }
 
@@ -70,26 +69,20 @@ public class SearchProfileService {
         return searchProfile;
     }
 
-    public SearchProfile getSearchProfileByUSerID(long id) {
+    public SearchProfile getSearchProfileByUserId(long id) {
         return searchProfileRepository.findByUserId(id)
-                .orElseThrow(() -> new ResourceNotFound("User not found"));
+                .orElseThrow(() -> new ResourceNotFound("Search Profile Not Found"));
     }
 
     public SearchProfileResponse getMySearchProfile() {
         long userId = userService.getCurrentUserId();
-        SearchProfile searchProfile = getSearchProfileByUSerID(userId);
-        if (searchProfile == null) {
-            throw new ResourceNotFound("Search Profile Not Found from UserID: " + userId);
-        }
+        SearchProfile searchProfile = getSearchProfileByUserId(userId);
         return getSearchProfileResponse(searchProfile);
     }
 
     public SearchProfileResponse updateSearchProfile(UpdateSearchProfileRequest request) {
         long userId = userService.getCurrentUserId();
-        SearchProfile profile = searchProfileRepository.findByUserId(userId).orElse(null);
-        if (profile == null) {
-            throw new ResourceNotFound("Search Profile Not Found from UserID: " + userId);
-        }
+        SearchProfile profile = getSearchProfileByUserId(userId);
         if (request.getName() != null) {
             profile.setName(request.getName());
         }

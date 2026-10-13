@@ -42,7 +42,7 @@ public class JobRecommendationService {
     @Transactional
     public SearchProfile findSearchProfile() {
         long userId = userService.getCurrentUserId();
-        return searchProfileService.getSearchProfileByUSerID(userId);
+        return searchProfileService.getSearchProfileByUserId(userId);
     }
 
     @Transactional
