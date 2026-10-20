@@ -38,7 +38,7 @@ public class ResumeController {
     @PostMapping("/{resumeId}/version")
     public ResponseEntity<ResumeContent> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
-        String rawText = resumeService.extractResume(userId, resumeId);
+        String rawText = resumeService.retrieveRawResume(userId, resumeId);
         ResumeContent structuredContent = resumeService.parseResumeContent(rawText);
         return ResponseEntity.status(HttpStatus.OK).body(jsonMapper.convertValue(structuredContent, ResumeContent.class));
     }

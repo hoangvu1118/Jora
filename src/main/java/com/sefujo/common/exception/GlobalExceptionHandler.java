@@ -15,6 +15,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(LlmUnavailableException.class)
+    public ProblemDetail handleLlmUnavailableException(LlmUnavailableException e) {
+        log.error("LlmUnavailableException", e);
+        return ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE,
+                "LLM cannot response");
+    }
+
     @ExceptionHandler(FileReadingException.class)
     public ProblemDetail handleFileReadingException(FileReadingException ex) {
         log.warn("Cannot read this file", ex);

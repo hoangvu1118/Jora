@@ -24,12 +24,12 @@ public class GeminiResumeContentParser implements ResumeContentParser {
     private GenerateContentResponse sendToLLM(String rawText) {
         String finalPrompt;
         try{
-             String prompt = new ClassPathResource("./prompt.txt")
+             String prompt = new ClassPathResource("prompts/prompt.txt")
                     .getContentAsString(StandardCharsets.UTF_8);
 
              finalPrompt = prompt.replace("{{RESUME_TEXT}}", rawText);
         } catch (IOException e){
-            throw new FileReadingException("Cannot read the file", e);
+            throw new RuntimeException("Cannot locate resource", e);
         }
 
         try{
@@ -41,9 +41,8 @@ public class GeminiResumeContentParser implements ResumeContentParser {
             return response;
 
         } catch (Exception e){
-            e.printStackTrace();
+            throw new RuntimeException("Cannot communicate with LLMs", e);
         }
-        return null;
     }
 
     @Override

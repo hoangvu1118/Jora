@@ -91,6 +91,12 @@ public class ResumeService {
         }
     }
 
+    public String retrieveRawResume(Long userId, Long resumeId) {
+        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        return resume.getRawText();
+    }
+
     public ResumeContent parseResumeContent(String rawText) {
         return resumeContentParser.parse(rawText);
     }
