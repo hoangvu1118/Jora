@@ -95,9 +95,7 @@ public class ResumeService {
         }
     }
 
-    public String retrieveRawResume(Long userId, Long resumeId) {
-        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
-                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+    public String retrieveRawResume(Resume resume) {
         if(resume.getRawText() == null || resume.getRawText().isEmpty()) {
             throw new InvalidFileException("Please extract the raw text first");
         }
@@ -113,11 +111,11 @@ public class ResumeService {
         );
     }
 
-    public ResumeVersionBriefResponse createResumeVersion(Long resumeId, Long userId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() ->  new ResourceNotFound("Cannot found resume for this Id"));
+    public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
+        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
 
-        String rawText = retrieveRawResume(userId, resumeId);
+        String rawText = retrieveRawResume(resume);
         ResumeContent resumeContent = parseResumeContent(rawText);
 
         ResumeVersion resumeVersion = new ResumeVersion(
@@ -127,14 +125,16 @@ public class ResumeService {
         return toResumeVersionBriefResponse(newVersion);
     }
 
-    public Optional<ResumeVersionBriefResponse> findBaseResume(Long resumeId, Long userId) {
+    public Optional<ResumeVersionBriefResponse> findBaseResume(Long userId, Long resumeId) {
         resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Ids"));
 
-        ResumeVersion version = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
-                .orElseThrow(() -> new ResourceNotFound("Cannot found version for this resume Id"));
+        Optional<ResumeVersion> version = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE);
+        if(version.isEmpty()) {
+            return Optional.empty();
+        }
 
-        return Optional.of(toResumeVersionBriefResponse(version));
+        return Optional.of(toResumeVersionBriefResponse(version.get()));
     }
 
 
