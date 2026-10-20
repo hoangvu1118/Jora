@@ -4,8 +4,10 @@ import com.sefujo.common.exception.FileReadingException;
 import com.sefujo.common.exception.InvalidFileException;
 import com.sefujo.common.exception.ResourceNotFound;
 import com.sefujo.resume.content.ResumeContent;
+import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.resume.entity.Resume;
+import com.sefujo.resume.entity.ResumeVersion;
 import com.sefujo.resume.extractor.ResumeContentParser;
 import com.sefujo.resume.extractor.ResumeExtractor;
 import com.sefujo.storage.FileStorage;
@@ -18,11 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeRepository resumeRepository;
+    private final ResumeVersionRepository resumeVersionRepository;
     private final FileStorage fileStorage;
     private final UserService userService;
     private final ResumeExtractor resumeExtractor;
@@ -99,6 +103,40 @@ public class ResumeService {
         }
         return resume.getRawText();
     }
+
+    private ResumeVersionBriefResponse toResumeVersionBriefResponse(ResumeVersion version) {
+        return new ResumeVersionBriefResponse(
+                version.getId(),
+                version.getType(),
+                version.getEditStatus(),
+                version.getContent()
+        );
+    }
+
+    public ResumeVersionBriefResponse createResumeVersion(Long resumeId, Long userId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() ->  new ResourceNotFound("Cannot found resume for this Id"));
+
+        String rawText = retrieveRawResume(userId, resumeId);
+        ResumeContent resumeContent = parseResumeContent(rawText);
+
+        ResumeVersion resumeVersion = new ResumeVersion(
+                resume, resumeContent
+        );
+        ResumeVersion newVersion =  resumeVersionRepository.saveAndFlush(resumeVersion);
+        return toResumeVersionBriefResponse(newVersion);
+    }
+
+    public Optional<ResumeVersionBriefResponse> findBaseResume(Long resumeId, Long userId) {
+        resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Ids"));
+
+        ResumeVersion version = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found version for this resume Id"));
+
+        return Optional.of(toResumeVersionBriefResponse(version));
+    }
+
 
     public ResumeContent parseResumeContent(String rawText) {
         return resumeContentParser.parse(rawText);

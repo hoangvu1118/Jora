@@ -1,7 +1,9 @@
 package com.sefujo.resume;
 
 import com.sefujo.resume.content.ResumeContent;
+import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.UploadResumeResponse;
+import com.sefujo.resume.entity.ResumeVersion;
 import com.sefujo.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tools.jackson.databind.json.JsonMapper;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/resume")
@@ -36,11 +41,15 @@ public class ResumeController {
     }
 
     @PostMapping("/{resumeId}/version")
-    public ResponseEntity<ResumeContent> structureVersion(@PathVariable long resumeId) {
+    public ResponseEntity<ResumeVersionBriefResponse> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
-        String rawText = resumeService.retrieveRawResume(userId, resumeId);
-        ResumeContent structuredContent = resumeService.parseResumeContent(rawText);
-        return ResponseEntity.status(HttpStatus.OK).body(jsonMapper.convertValue(structuredContent, ResumeContent.class));
+        Optional<ResumeVersionBriefResponse> existing = resumeService.findBaseResume(resumeId, userId);
+        if(existing.isPresent()) {
+            return  ResponseEntity.status(HttpStatus.OK).body(existing.get());
+        }
+
+        ResumeVersionBriefResponse response = resumeService.createResumeVersion(resumeId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }

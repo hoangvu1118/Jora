@@ -57,6 +57,16 @@ public class ResumeVersion {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    public ResumeVersion() {
+
+    }
+
+    public ResumeVersion(Resume resume, ResumeContent content) {
+        this.resume = resume;
+        this.content = content;
+        this.type = ResumeVersionType.BASE;
+    }
+
     public void updateContent(ResumeContent newContent) {
         if (editStatus == ResumeVersionStatus.FINAL) {
             throw new IllegalStateException("Version is locked");
