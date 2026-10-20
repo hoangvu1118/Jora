@@ -94,6 +94,9 @@ public class ResumeService {
     public String retrieveRawResume(Long userId, Long resumeId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        if(resume.getRawText() == null || resume.getRawText().isEmpty()) {
+            throw new ResourceNotFound("Cannot found resume for this Id");
+        }
         return resume.getRawText();
     }
 

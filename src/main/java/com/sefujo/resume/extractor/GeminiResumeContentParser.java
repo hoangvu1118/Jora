@@ -1,6 +1,7 @@
 package com.sefujo.resume.extractor;
 
 import com.sefujo.common.exception.FileReadingException;
+import com.sefujo.common.exception.LlmUnavailableException;
 import com.sefujo.resume.content.ResumeContent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -41,7 +42,7 @@ public class GeminiResumeContentParser implements ResumeContentParser {
             return response;
 
         } catch (Exception e){
-            throw new RuntimeException("Cannot communicate with LLMs", e);
+            throw new LlmUnavailableException("Cannot communicate with LLMs", e);
         }
     }
 
