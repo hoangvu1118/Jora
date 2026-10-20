@@ -3,8 +3,10 @@ package com.sefujo.resume;
 import com.sefujo.common.exception.FileReadingException;
 import com.sefujo.common.exception.InvalidFileException;
 import com.sefujo.common.exception.ResourceNotFound;
+import com.sefujo.resume.content.ResumeContent;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.resume.entity.Resume;
+import com.sefujo.resume.extractor.ResumeContentParser;
 import com.sefujo.resume.extractor.ResumeExtractor;
 import com.sefujo.storage.FileStorage;
 import com.sefujo.user.User;
@@ -24,6 +26,7 @@ public class ResumeService {
     private final FileStorage fileStorage;
     private final UserService userService;
     private final ResumeExtractor resumeExtractor;
+    private final ResumeContentParser resumeContentParser;
 
     private UploadResumeResponse toResponse(Resume resume) {
         long resumeId = resume.getId();
@@ -86,5 +89,9 @@ public class ResumeService {
         } catch (IOException e){
             throw new FileReadingException("Cannot read this file", e);
         }
+    }
+
+    public ResumeContent parseResumeContent(String rawText) {
+        return resumeContentParser.parse(rawText);
     }
 }
