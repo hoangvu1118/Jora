@@ -14,24 +14,22 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 
-@RequiredArgsConstructor
 @Component
 public class GeminiResumeContentParser implements ResumeContentParser {
 
     private final JsonMapper mapper;
     private final Client client;
+    private String promptTemplate;
 
+    public GeminiResumeContentParser(JsonMapper mapper, Client client) throws IOException {
+        this.mapper = mapper;
+        this.client = client;
+        promptTemplate = new ClassPathResource("prompts/prompt.txt")
+                .getContentAsString(StandardCharsets.UTF_8);
+    }
 
     private GenerateContentResponse sendToLLM(String rawText) {
-        String finalPrompt;
-        try{
-             String prompt = new ClassPathResource("prompts/prompt.txt")
-                    .getContentAsString(StandardCharsets.UTF_8);
-
-             finalPrompt = prompt.replace("{{RESUME_TEXT}}", rawText);
-        } catch (IOException e){
-            throw new RuntimeException("Cannot locate resource", e);
-        }
+        String finalPrompt = promptTemplate.replace("{{RESUME_TEXT}}", rawText);
 
         try{
             GenerateContentResponse response = client.models.generateContent(
