@@ -1,9 +1,7 @@
 package com.sefujo.resume.extractor;
 
-import com.sefujo.common.exception.FileReadingException;
 import com.sefujo.common.exception.LlmUnavailableException;
 import com.sefujo.resume.content.ResumeContent;
-import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.json.JsonMapper;
@@ -19,7 +17,7 @@ public class GeminiResumeContentParser implements ResumeContentParser {
 
     private final JsonMapper mapper;
     private final Client client;
-    private String promptTemplate;
+    private final String promptTemplate;
 
     public GeminiResumeContentParser(JsonMapper mapper, Client client) throws IOException {
         this.mapper = mapper;
