@@ -37,16 +37,25 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.OK).body(rawText);
     }
 
-    @PostMapping("/{resumeId}/version")
+    @PostMapping("/{resumeId}/versions")
     public ResponseEntity<ResumeVersionBriefResponse> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
         Optional<ResumeVersionBriefResponse> existing = resumeService.findBaseResume(userId, resumeId);
         if(existing.isPresent()) {
             return  ResponseEntity.status(HttpStatus.OK).body(existing.get());
         }
-
+        // Call LLM to create a BASE version out of rawText
         ResumeVersionBriefResponse response = resumeService.createResumeVersion(userId, resumeId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping("/{resumeId}/versions/{versionId}")
+    public ResponseEntity<ResumeVersionBriefResponse> getVersion(@PathVariable long resumeId, @PathVariable long versionId) {
+        long userId = userService.getCurrentUserId();
+        Optional<ResumeVersionBriefResponse> response = resumeService.getResumeVersion(userId, resumeId, versionId);
+        if(response.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.get());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
 }

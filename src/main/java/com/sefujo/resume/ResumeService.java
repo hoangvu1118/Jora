@@ -146,6 +146,11 @@ public class ResumeService {
         return Optional.of(toResumeVersionBriefResponse(version.get()));
     }
 
+    public Optional<ResumeVersionBriefResponse> getResumeVersion(Long userId, Long resumeId, Long versionId) {
+        ResumeVersion version = resumeVersionRepository.findByIdAndResumeIdAndResumeUserId(userId, resumeId, versionId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume version for this Ids"));
+        return Optional.of(toResumeVersionBriefResponse(version));
+    }
 
     public ResumeContent parseResumeContent(String rawText) {
         return resumeContentParser.parse(rawText);
