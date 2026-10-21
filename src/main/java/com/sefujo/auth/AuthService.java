@@ -3,6 +3,8 @@ package com.sefujo.auth;
 import com.sefujo.auth.dto.LoginRequest;
 import com.sefujo.auth.dto.RegisterRequest;
 import com.sefujo.common.exception.EmailAlreadyExistsException;
+import com.sefujo.common.exception.InvalidCredentialException;
+import com.sefujo.common.exception.UserNotAuthenticated;
 import com.sefujo.common.security.CustomUserDetail;
 import com.sefujo.common.security.CustomUserDetailService;
 import com.sefujo.common.security.JwtTokenProvider;
@@ -14,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,11 +32,19 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse authenticate(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-        );
+        Authentication authentication;
+        try {
+             authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+            );
+        } catch (AuthenticationException e) {
+            throw new InvalidCredentialException("Invalid email or password");
+        }
 
-        CustomUserDetail userDetails = (CustomUserDetail) userDetailsService.loadUserByUsername(loginRequest.getEmail());
+        CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
+        if (userDetails == null) {
+            throw new UserNotAuthenticated("User not authenticated");
+        }
         String token = jwtTokenProvider.generateToken(userDetails);
 
         return new AuthResponse(

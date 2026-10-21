@@ -15,6 +15,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(InvalidCredentialException.class)
+    public ProblemDetail handleInvalidCredentialException(InvalidCredentialException e) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,
+                "Username or Password is incorrect");
+    }
+
     @ExceptionHandler(LlmUnavailableException.class)
     public ProblemDetail handleLlmUnavailableException(LlmUnavailableException e) {
         log.error("LlmUnavailableException", e);

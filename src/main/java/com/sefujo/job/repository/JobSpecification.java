@@ -28,7 +28,7 @@ public class JobSpecification {
     }
     public static Specification<Job> isOpen() {
         return (root, query, cb) ->
-                cb.equal(root.get("status"), "open");
+                cb.equal(root.get("status"), "OPEN");
     }
     public static Specification<Job> hasTitle(String title) {
         return (root, query, cb) ->
