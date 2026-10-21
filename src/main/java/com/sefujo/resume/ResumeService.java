@@ -147,7 +147,7 @@ public class ResumeService {
     }
 
     public Optional<ResumeVersionBriefResponse> getResumeVersion(Long userId, Long resumeId, Long versionId) {
-        ResumeVersion version = resumeVersionRepository.findByIdAndResumeIdAndResumeUserId(userId, resumeId, versionId)
+        ResumeVersion version = resumeVersionRepository.findByIdAndResumeIdAndResumeUserId(versionId, resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume version for this Ids"));
         return Optional.of(toResumeVersionBriefResponse(version));
     }

@@ -53,9 +53,7 @@ public class ResumeController {
     public ResponseEntity<ResumeVersionBriefResponse> getVersion(@PathVariable long resumeId, @PathVariable long versionId) {
         long userId = userService.getCurrentUserId();
         Optional<ResumeVersionBriefResponse> response = resumeService.getResumeVersion(userId, resumeId, versionId);
-        if(response.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(response.get());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(response.get());
+
     }
 }
