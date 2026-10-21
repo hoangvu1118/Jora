@@ -56,11 +56,11 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping("/resume/{resumeId}/archive")
+    @PostMapping("/{resumeId}/archive")
     public ResponseEntity<Void> archiveResume(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
-        resumeService.archiveResume(resumeId, userId);
-        return ResponseEntity.accepted().body(null);
+        resumeService.archiveResume(userId, resumeId);
+        return ResponseEntity.noContent().build();
     }
 
 }

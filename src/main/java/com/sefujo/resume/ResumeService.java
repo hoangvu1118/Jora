@@ -79,7 +79,7 @@ public class ResumeService {
         return false;
     }
 
-    private void checkResumeArchive(Resume resume) throws ResumeArchiveException {
+    private void checkResumeArchive(Resume resume) {
         if(resume.isArchived()) {
             throw new ResumeArchiveException("Resume is archived");
         }
@@ -161,11 +161,12 @@ public class ResumeService {
         return resumeContentParser.parse(rawText);
     }
 
-    public void archiveResume(Long resumeId, Long userId) {
+    public void archiveResume(Long userId, Long resumeId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
         checkResumeArchive(resume);
 
         resume.archive();
+        resumeRepository.saveAndFlush(resume);
     }
 }

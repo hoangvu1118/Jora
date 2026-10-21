@@ -54,7 +54,7 @@ public class Resume {
     }
 
     public boolean isArchived() {
-        return this.archivedAt.isBefore(LocalDateTime.now());
+        return this.archivedAt != null;
     }
 
 }
