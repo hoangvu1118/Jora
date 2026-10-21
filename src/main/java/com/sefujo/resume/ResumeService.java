@@ -1,8 +1,6 @@
 package com.sefujo.resume;
 
-import com.sefujo.common.exception.FileReadingException;
-import com.sefujo.common.exception.InvalidFileException;
-import com.sefujo.common.exception.ResourceNotFound;
+import com.sefujo.common.exception.*;
 import com.sefujo.resume.content.ResumeContent;
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.UploadResumeResponse;
@@ -81,9 +79,16 @@ public class ResumeService {
         return false;
     }
 
+    private void checkResumeArchive(Resume resume) throws ResumeArchiveException {
+        if(resume.isArchived()) {
+            throw new ResumeArchiveException("Resume is archived");
+        }
+    }
+
     public String extractResume(Long userId, Long resumeId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        checkResumeArchive(resume);
         try(
             InputStream pdfStream = fileStorage.load(resume.getFilePath());
             ){
@@ -115,7 +120,7 @@ public class ResumeService {
     public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
-
+        checkResumeArchive(resume);
         String rawText = retrieveRawResume(resume);
         // Call Gemini for the reformat resume
         ResumeContent resumeContent = parseResumeContent(rawText);
@@ -146,13 +151,21 @@ public class ResumeService {
         return Optional.of(toResumeVersionBriefResponse(version.get()));
     }
 
-    public Optional<ResumeVersionBriefResponse> getResumeVersion(Long userId, Long resumeId, Long versionId) {
+    public ResumeVersionBriefResponse getResumeVersion(Long userId, Long resumeId, Long versionId) {
         ResumeVersion version = resumeVersionRepository.findByIdAndResumeIdAndResumeUserId(versionId, resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume version for this Ids"));
-        return Optional.of(toResumeVersionBriefResponse(version));
+        return toResumeVersionBriefResponse(version);
     }
 
     public ResumeContent parseResumeContent(String rawText) {
         return resumeContentParser.parse(rawText);
+    }
+
+    public void archiveResume(Long resumeId, Long userId) {
+        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        checkResumeArchive(resume);
+
+        resume.archive();
     }
 }

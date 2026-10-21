@@ -48,9 +48,13 @@ public class Resume {
     }
 
     public void archive() {
-        this.archivedAt = LocalDateTime.now();
+        if(archivedAt == null) {
+            this.archivedAt = LocalDateTime.now();
+        }
     }
 
-
+    public boolean isArchived() {
+        return this.archivedAt.isBefore(LocalDateTime.now());
+    }
 
 }

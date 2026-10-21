@@ -52,8 +52,15 @@ public class ResumeController {
     @GetMapping("/{resumeId}/versions/{versionId}")
     public ResponseEntity<ResumeVersionBriefResponse> getVersion(@PathVariable long resumeId, @PathVariable long versionId) {
         long userId = userService.getCurrentUserId();
-        Optional<ResumeVersionBriefResponse> response = resumeService.getResumeVersion(userId, resumeId, versionId);
-        return ResponseEntity.status(HttpStatus.OK).body(response.get());
-
+        ResumeVersionBriefResponse response = resumeService.getResumeVersion(userId, resumeId, versionId);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PostMapping("/resume/{resumeId}/archive")
+    public ResponseEntity<Void> archiveResume(@PathVariable long resumeId) {
+        long userId = userService.getCurrentUserId();
+        resumeService.archiveResume(resumeId, userId);
+        return ResponseEntity.accepted().body(null);
+    }
+
 }
