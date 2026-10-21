@@ -14,6 +14,7 @@ import com.sefujo.storage.FileStorage;
 import com.sefujo.user.User;
 import com.sefujo.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -116,12 +117,20 @@ public class ResumeService {
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
 
         String rawText = retrieveRawResume(resume);
+        // Call Gemini for the reformat resume
         ResumeContent resumeContent = parseResumeContent(rawText);
 
-        ResumeVersion resumeVersion = new ResumeVersion(
-                resume, resumeContent
-        );
-        ResumeVersion newVersion =  resumeVersionRepository.saveAndFlush(resumeVersion);
+        ResumeVersion newVersion;
+        try{
+            newVersion = resumeVersionRepository.saveAndFlush(
+                    new ResumeVersion(resume, resumeContent)
+            );
+        } catch (DataIntegrityViolationException e){
+            // another request created the BASE first: return that one
+            newVersion = resumeVersionRepository
+                                .findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
+                                .orElseThrow(() -> e);   // shouldn't happen; if it does, it's a real error
+        }
         return toResumeVersionBriefResponse(newVersion);
     }
 
