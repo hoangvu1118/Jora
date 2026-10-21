@@ -69,7 +69,7 @@ public class JobRecommendationService {
             jobRecommendation.setMatchReasons(result.getReasons());
             toSave.add(jobRecommendation);
         }
-        jobRecommendationRepository.saveAll(toSave);
+        jobRecommendationRepository.saveAllAndFlush(toSave);
         return new JobRecommendGenerationResponse(jobs.size(), toSave.size());
     }
 

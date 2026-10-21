@@ -59,7 +59,7 @@ public class JobPostingPersistenceService {
         jobPosting.setSourcePublishedAt(raw.sourcePublishedAt());
         jobPosting.setFirstSeenAt(LocalDateTime.now());
         jobPosting.setLastSeenAt(LocalDateTime.now());
-        jobPosting.setStatus("open");
+        jobPosting.setStatus("OPEN");
         return jobPosting;
     }
 
@@ -71,7 +71,7 @@ public class JobPostingPersistenceService {
         job.setNormalizedTitle(raw.title().toLowerCase());
         job.setCreatedDate(raw.sourcePublishedAt());
         job.setUpdatedDate(raw.sourceUpdatedAt());
-        job.setStatus("open");
+        job.setStatus("OPEN");
         return job;
     }
 
