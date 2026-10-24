@@ -36,17 +36,12 @@ public class ResumeVersionService {
         );
     }
 
-    public ResumeContent parseResumeContent(String rawText) {
-        return resumeContentParser.parse(rawText);
-    }
-
-
     public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
         Resume resume = resumeService.getActiveResume(userId, resumeId);
 
         String rawText = resumeService.retrieveRawResume(resume);
         // Call Gemini for the reformat resume
-        ResumeContent resumeContent = parseResumeContent(rawText);
+        ResumeContent resumeContent = resumeContentParser.parse(rawText);
 
         ResumeVersion newVersion;
         try{

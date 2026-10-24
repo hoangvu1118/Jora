@@ -89,9 +89,7 @@ public class ResumeService {
     }
 
     public String extractResume(Long userId, Long resumeId) {
-        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
-                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
-        checkResumeArchive(resume);
+        Resume resume = getActiveResume(userId, resumeId);
         try(
             InputStream pdfStream = fileStorage.load(resume.getFilePath());
             ){
@@ -112,10 +110,7 @@ public class ResumeService {
     }
 
     public void archiveResume(Long userId, Long resumeId) {
-        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
-                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
-        checkResumeArchive(resume);
-
+        Resume resume = getActiveResume(userId, resumeId);
         resume.archive();
         resumeRepository.saveAndFlush(resume);
     }
