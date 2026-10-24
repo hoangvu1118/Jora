@@ -49,19 +49,17 @@ public class ResumeService {
     }
 
     private ResumeVersion createTailorVersion(ResumeVersion version, Resume resume, ResumeContent content, Job job) {
-        ResumeVersion resumeVersion = resumeVersionRepository.findByResumeIdAndType(
-                resume.getId(), ResumeVersionType.TAILORED
-        ).orElse(null);
-        if (resumeVersion != null) {
-            throw new DataIntegrityViolationException("Resume version already exists");
+        try{
+            ResumeVersion newResumeVersion = new ResumeVersion();
+            newResumeVersion.setResume(resume);
+            newResumeVersion.setParentVersion(version);
+            newResumeVersion.setJob(job);
+            newResumeVersion.setType(ResumeVersionType.TAILORED);
+            newResumeVersion.updateContent(content);
+            return resumeVersionRepository.saveAndFlush(newResumeVersion);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Can't save resume version, check if it has existed before");
         }
-        ResumeVersion newResumeVersion = new ResumeVersion();
-        newResumeVersion.setResume(resume);
-        newResumeVersion.setParentVersion(version);
-        newResumeVersion.setJob(job);
-        newResumeVersion.setType(ResumeVersionType.TAILORED);
-        newResumeVersion.updateContent(content);
-        return resumeVersionRepository.saveAndFlush(newResumeVersion);
     }
 
     @Transactional
@@ -203,18 +201,24 @@ public class ResumeService {
         );
     }
 
-    public ResumeVersionBriefResponse tailorResume(Long userId, Long resumeId, Long jobId) {
+    public Optional<ResumeVersionBriefResponse> tailorResume(Long userId, Long resumeId, Long jobId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
         checkResumeArchive(resume);
 
-        ResumeVersion version = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
+        ResumeVersion parentVersion = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
                 .orElseThrow(() -> new ConflictException("Please create BASE Resume for this Id first"));
+
+        ResumeVersion potentialTailoredVersion = resumeVersionRepository.findByResumeIdAndJobId(resumeId, jobId)
+                .orElse(null);
+        if(potentialTailoredVersion != null) {
+            throw new ConflictException("A tailored version for this Job already exists");
+        }
 
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found job for this Id"));
 
-        ResumeContent content = version.getContent();
+        ResumeContent content = parentVersion.getContent();
         TailorSection tailorSection = new TailorSection(
                 content.experiences(),
                 content.projects(),
@@ -227,8 +231,8 @@ public class ResumeService {
         TailorSection processedSection = resumeContentParser.tailorSections(description, stringSection);
         ResumeContent processedContent = toResumeContent(content, processedSection);
 
-        ResumeVersion tailoredVersion = createTailorVersion(version, resume, processedContent, job);
-        return toResumeVersionBriefResponse(tailoredVersion);
+        ResumeVersion tailoredVersion = createTailorVersion(parentVersion, resume, processedContent, job);
+        return Optional.of(toResumeVersionBriefResponse(tailoredVersion));
     }
 
 }

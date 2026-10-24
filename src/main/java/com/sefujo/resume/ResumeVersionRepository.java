@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface ResumeVersionRepository extends JpaRepository<ResumeVersion, Long> {
     Optional<ResumeVersion> findByResumeIdAndType(Long resumeId, ResumeVersionType type);
-
+    Optional<ResumeVersion> findByResumeIdAndJobId(Long resumeId, Long jobId);
     Optional<ResumeVersion> findByIdAndResumeIdAndResumeUserId(Long versionId, Long resumeId, Long userId);
 }

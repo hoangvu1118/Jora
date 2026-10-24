@@ -68,8 +68,11 @@ public class ResumeController {
             @PathVariable long resumeId, @PathVariable long jobId) {
 
         long userId = userService.getCurrentUserId();
-        ResumeVersionBriefResponse response = resumeService.tailorResume(userId, resumeId, jobId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        Optional<ResumeVersionBriefResponse> response = resumeService.tailorResume(userId, resumeId, jobId);
+        if(response.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.get());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(response.get());
     }
 
 }
