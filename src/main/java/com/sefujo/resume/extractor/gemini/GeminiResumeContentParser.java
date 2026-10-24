@@ -1,16 +1,10 @@
 package com.sefujo.resume.extractor.gemini;
 
-import com.sefujo.common.exception.LlmUnavailableException;
 import com.sefujo.resume.content.ResumeContent;
-import com.sefujo.resume.content.TailorSection;
 import com.sefujo.resume.extractor.ResumeContentParser;
-import com.sefujo.resume.extractor.ResumeTailor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.json.JsonMapper;
-import com.google.genai.Client;
-import com.google.genai.types.GenerateContentResponse;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 

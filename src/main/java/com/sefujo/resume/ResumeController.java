@@ -19,8 +19,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ResumeController {
     private final ResumeService resumeService;
+    private final ResumeVersionService resumeVersionService;
     private final UserService userService;
-    private final JsonMapper jsonMapper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UploadResumeResponse> resume(
@@ -41,19 +41,19 @@ public class ResumeController {
     @PostMapping("/{resumeId}/versions")
     public ResponseEntity<ResumeVersionBriefResponse> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
-        Optional<ResumeVersionBriefResponse> existing = resumeService.findBaseResume(userId, resumeId);
+        Optional<ResumeVersionBriefResponse> existing = resumeVersionService.findBaseResume(userId, resumeId);
         if(existing.isPresent()) {
             return  ResponseEntity.status(HttpStatus.OK).body(existing.get());
         }
         // Call LLM to create a BASE version out of rawText
-        ResumeVersionBriefResponse response = resumeService.createResumeVersion(userId, resumeId);
+        ResumeVersionBriefResponse response = resumeVersionService.createResumeVersion(userId, resumeId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/{resumeId}/versions/{versionId}")
     public ResponseEntity<ResumeVersionBriefResponse> getVersion(@PathVariable long resumeId, @PathVariable long versionId) {
         long userId = userService.getCurrentUserId();
-        ResumeVersionBriefResponse response = resumeService.getResumeVersion(userId, resumeId, versionId);
+        ResumeVersionBriefResponse response = resumeVersionService.getResumeVersion(userId, resumeId, versionId);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -69,7 +69,7 @@ public class ResumeController {
             @PathVariable long resumeId, @PathVariable long jobId) {
 
         long userId = userService.getCurrentUserId();
-        TailoredResult response = resumeService.tailorResume(userId, resumeId, jobId);
+        TailoredResult response = resumeVersionService.tailorResume(userId, resumeId, jobId);
         if(response.created()){
             return ResponseEntity.status(HttpStatus.CREATED).body(response.version());
         }
