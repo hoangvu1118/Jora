@@ -1,7 +1,10 @@
 package com.sefujo.resume;
 
 import com.sefujo.common.exception.*;
+import com.sefujo.job.entity.Job;
+import com.sefujo.job.repository.JobRepository;
 import com.sefujo.resume.content.ResumeContent;
+import com.sefujo.resume.content.TailorSection;
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.resume.entity.Resume;
@@ -16,6 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,12 +28,14 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ResumeService {
+    private final JobRepository jobRepository;
     private final ResumeRepository resumeRepository;
     private final ResumeVersionRepository resumeVersionRepository;
     private final FileStorage fileStorage;
     private final UserService userService;
     private final ResumeExtractor resumeExtractor;
     private final ResumeContentParser resumeContentParser;
+    private final JsonMapper jsonMapper;
 
     private UploadResumeResponse toResponse(Resume resume) {
         long resumeId = resume.getId();
@@ -40,6 +46,22 @@ public class ResumeService {
                 resumeId, fileName, fileSize, fileType
         );
         return response;
+    }
+
+    private ResumeVersion createTailorVersion(ResumeVersion version, Resume resume, ResumeContent content, Job job) {
+        ResumeVersion resumeVersion = resumeVersionRepository.findByResumeIdAndType(
+                resume.getId(), ResumeVersionType.TAILORED
+        ).orElse(null);
+        if (resumeVersion != null) {
+            throw new DataIntegrityViolationException("Resume version already exists");
+        }
+        ResumeVersion newResumeVersion = new ResumeVersion();
+        newResumeVersion.setResume(resume);
+        newResumeVersion.setParentVersion(version);
+        newResumeVersion.setJob(job);
+        newResumeVersion.setType(ResumeVersionType.TAILORED);
+        newResumeVersion.updateContent(content);
+        return resumeVersionRepository.saveAndFlush(newResumeVersion);
     }
 
     @Transactional
@@ -169,4 +191,44 @@ public class ResumeService {
         resume.archive();
         resumeRepository.saveAndFlush(resume);
     }
+
+    private ResumeContent toResumeContent(ResumeContent resumeContent, TailorSection tailorSection) {
+        return new ResumeContent(
+                resumeContent.header(),
+                resumeContent.education(),
+                tailorSection.experiences(),
+                tailorSection.projects(),
+                tailorSection.skillGroups(),
+                resumeContent.extraSections()
+        );
+    }
+
+    public ResumeVersionBriefResponse tailorResume(Long userId, Long resumeId, Long jobId) {
+        Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
+        checkResumeArchive(resume);
+
+        ResumeVersion version = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
+                .orElseThrow(() -> new ConflictException("Please create BASE Resume for this Id first"));
+
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResourceNotFound("Cannot found job for this Id"));
+
+        ResumeContent content = version.getContent();
+        TailorSection tailorSection = new TailorSection(
+                content.experiences(),
+                content.projects(),
+                content.skillGroups()
+        );
+
+        String description = job.getDescription();
+        String stringSection = jsonMapper.writeValueAsString(tailorSection);
+
+        TailorSection processedSection = resumeContentParser.tailorSections(description, stringSection);
+        ResumeContent processedContent = toResumeContent(content, processedSection);
+
+        ResumeVersion tailoredVersion = createTailorVersion(version, resume, processedContent, job);
+        return toResumeVersionBriefResponse(tailoredVersion);
+    }
+
 }

@@ -63,4 +63,13 @@ public class ResumeController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{resumeId}/tailor/{jobId}")
+    public ResponseEntity<ResumeVersionBriefResponse> tailorResume(
+            @PathVariable long resumeId, @PathVariable long jobId) {
+
+        long userId = userService.getCurrentUserId();
+        ResumeVersionBriefResponse response = resumeService.tailorResume(userId, resumeId, jobId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
 }
