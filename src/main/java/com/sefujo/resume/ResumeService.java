@@ -12,6 +12,7 @@ import com.sefujo.resume.entity.Resume;
 import com.sefujo.resume.entity.ResumeVersion;
 import com.sefujo.resume.extractor.ResumeContentParser;
 import com.sefujo.resume.extractor.ResumeExtractor;
+import com.sefujo.resume.extractor.ResumeTailor;
 import com.sefujo.storage.FileStorage;
 import com.sefujo.user.User;
 import com.sefujo.user.UserService;
@@ -20,7 +21,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ public class ResumeService {
     private final UserService userService;
     private final ResumeExtractor resumeExtractor;
     private final ResumeContentParser resumeContentParser;
-    private final JsonMapper jsonMapper;
+    private final ResumeTailor resumeTailor;
 
     private UploadResumeResponse toResponse(Resume resume) {
         long resumeId = resume.getId();
@@ -228,11 +228,9 @@ public class ResumeService {
                 content.projects(),
                 content.skillGroups()
         );
-
         String description = job.getDescription();
-        String stringSection = jsonMapper.writeValueAsString(tailorSection);
 
-        TailorSection processedSection = resumeContentParser.tailorSections(description, stringSection);
+        TailorSection processedSection = resumeTailor.tailorSections(description, tailorSection);
         ResumeContent processedContent = toResumeContent(content, processedSection);
 
         ResumeVersion tailoredVersion = createTailorVersion(parentVersion, resume, processedContent, job);

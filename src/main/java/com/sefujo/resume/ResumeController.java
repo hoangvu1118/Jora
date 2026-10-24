@@ -65,15 +65,15 @@ public class ResumeController {
     }
 
     @PostMapping("/{resumeId}/tailor/{jobId}")
-    public ResponseEntity<TailoredResult> tailorResume(
+    public ResponseEntity<ResumeVersionBriefResponse> tailorResume(
             @PathVariable long resumeId, @PathVariable long jobId) {
 
         long userId = userService.getCurrentUserId();
         TailoredResult response = resumeService.tailorResume(userId, resumeId, jobId);
         if(response.created()){
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response.version());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response.version());
     }
 
 }

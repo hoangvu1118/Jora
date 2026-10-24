@@ -5,5 +5,4 @@ import com.sefujo.resume.content.TailorSection;
 
 public interface ResumeContentParser {
     ResumeContent parse(String rawText);
-    TailorSection tailorSections(String description, String sections);
 }
