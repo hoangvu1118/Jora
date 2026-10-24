@@ -6,6 +6,7 @@ import com.sefujo.job.repository.JobRepository;
 import com.sefujo.resume.content.ResumeContent;
 import com.sefujo.resume.content.TailorSection;
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
+import com.sefujo.resume.dto.TailoredResult;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.resume.entity.Resume;
 import com.sefujo.resume.entity.ResumeVersion;
@@ -201,7 +202,7 @@ public class ResumeService {
         );
     }
 
-    public Optional<ResumeVersionBriefResponse> tailorResume(Long userId, Long resumeId, Long jobId) {
+    public TailoredResult tailorResume(Long userId, Long resumeId, Long jobId) {
         Resume resume = resumeRepository.findByIdAndUserId(resumeId, userId)
                 .orElseThrow(() -> new ResourceNotFound("Cannot found resume for this Id"));
         checkResumeArchive(resume);
@@ -209,10 +210,13 @@ public class ResumeService {
         ResumeVersion parentVersion = resumeVersionRepository.findByResumeIdAndType(resumeId, ResumeVersionType.BASE)
                 .orElseThrow(() -> new ConflictException("Please create BASE Resume for this Id first"));
 
-        ResumeVersion potentialTailoredVersion = resumeVersionRepository.findByResumeIdAndJobId(resumeId, jobId)
+        ResumeVersion existingTailoredVersion = resumeVersionRepository.findByResumeIdAndJobIdAndType(resumeId, jobId, ResumeVersionType.TAILORED)
                 .orElse(null);
-        if(potentialTailoredVersion != null) {
-            throw new ConflictException("A tailored version for this Job already exists");
+        if(existingTailoredVersion != null) {
+            return new TailoredResult(
+                    toResumeVersionBriefResponse(existingTailoredVersion),
+                    false
+            );
         }
 
         Job job = jobRepository.findById(jobId)
@@ -232,7 +236,10 @@ public class ResumeService {
         ResumeContent processedContent = toResumeContent(content, processedSection);
 
         ResumeVersion tailoredVersion = createTailorVersion(parentVersion, resume, processedContent, job);
-        return Optional.of(toResumeVersionBriefResponse(tailoredVersion));
+        return new TailoredResult(
+                toResumeVersionBriefResponse(tailoredVersion),
+                true
+        );
     }
 
 }

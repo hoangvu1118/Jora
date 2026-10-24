@@ -1,6 +1,7 @@
 package com.sefujo.resume;
 
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
+import com.sefujo.resume.dto.TailoredResult;
 import com.sefujo.resume.dto.UploadResumeResponse;
 import com.sefujo.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -64,15 +65,15 @@ public class ResumeController {
     }
 
     @PostMapping("/{resumeId}/tailor/{jobId}")
-    public ResponseEntity<ResumeVersionBriefResponse> tailorResume(
+    public ResponseEntity<TailoredResult> tailorResume(
             @PathVariable long resumeId, @PathVariable long jobId) {
 
         long userId = userService.getCurrentUserId();
-        Optional<ResumeVersionBriefResponse> response = resumeService.tailorResume(userId, resumeId, jobId);
-        if(response.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(response.get());
+        TailoredResult response = resumeService.tailorResume(userId, resumeId, jobId);
+        if(response.created()){
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(response.get());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
