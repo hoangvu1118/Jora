@@ -1,4 +1,4 @@
-package com.sefujo.ingestion;
+package com.sefujo.ingestion.dto;
 
 import java.time.OffsetDateTime;
 

@@ -1,5 +1,7 @@
 package com.sefujo.ingestion;
 
+import com.sefujo.ingestion.dto.RawJobPosting;
+import com.sefujo.ingestion.dto.RawJobSummary;
 import com.sefujo.job.JobLocationFilter;
 import com.sefujo.job.JobPostingPersistenceService;
 import com.sefujo.job.entity.Company;
@@ -8,7 +10,6 @@ import com.sefujo.job.entity.Platform;
 import com.sefujo.job.repository.CompanyRepository;
 import com.sefujo.job.repository.PlatformRepository;
 import com.sefujo.job.source.JobSource;
-import com.sefujo.job.source.greenhouse.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.sefujo.job;
 
-import com.sefujo.ingestion.RawJobPosting;
+import com.sefujo.ingestion.dto.RawJobPosting;
 import com.sefujo.job.entity.Company;
 import com.sefujo.job.entity.Job;
 import com.sefujo.job.entity.JobPosting;
@@ -8,7 +8,6 @@ import com.sefujo.job.entity.Platform;
 import com.sefujo.job.repository.JobPostingRepository;
 import com.sefujo.job.repository.JobRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

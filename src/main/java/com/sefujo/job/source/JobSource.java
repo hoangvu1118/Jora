@@ -1,7 +1,7 @@
 package com.sefujo.job.source;
 
-import com.sefujo.ingestion.RawJobPosting;
-import com.sefujo.ingestion.RawJobSummary;
+import com.sefujo.ingestion.dto.RawJobPosting;
+import com.sefujo.ingestion.dto.RawJobSummary;
 
 import java.util.List;
 

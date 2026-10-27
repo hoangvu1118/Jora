@@ -1,7 +1,6 @@
-package com.sefujo.ingestion;
+package com.sefujo.ingestion.dto;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 public record RawJobPosting(
         String sourceKey, // e.g axon

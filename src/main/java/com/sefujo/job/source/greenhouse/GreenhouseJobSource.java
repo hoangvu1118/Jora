@@ -1,10 +1,8 @@
 package com.sefujo.job.source.greenhouse;
 
-import com.sefujo.ingestion.RawJobPosting;
-import com.sefujo.ingestion.RawJobSummary;
-import com.sefujo.job.JobService;
+import com.sefujo.ingestion.dto.RawJobPosting;
+import com.sefujo.ingestion.dto.RawJobSummary;
 import com.sefujo.job.source.JobSource;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
