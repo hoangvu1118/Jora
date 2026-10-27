@@ -48,13 +48,11 @@ public class JobIngestionService {
 
     public List<RawJobPosting> ingest(
             JobSource source,
-            String sourceKey // the company name
+            String companyName // the company name
     ) {
         List<RawJobSummary> summaries =
-                source.fetchJobSummaries(sourceKey);
+                source.fetchJobSummaries(companyName);
 
-        // 1. Resolve Company
-        Company company = findOrCreateCompany(sourceKey, "");
         // 2. Resolve Platform
         Platform platform = findOrCreatePlatform(source.platformName(), "");
         // 3. Filter location
@@ -81,13 +79,16 @@ public class JobIngestionService {
                 continue;
             }
             RawJobPosting raw =
-                    source.fetchJobDetail(sourceKey, summary.externalId());
-
-            // 5.2 Job deduplication
-            persistenceService.save(raw, company, platform);
+                    source.fetchJobDetail(companyName, summary.externalId());
             results.add(raw);
         }
 
         return results;
+    }
+
+    public void persistDiscoveredJob(RawJobPosting raw, Platform platform, String companyName) {
+        Company company = findOrCreateCompany(companyName, "");
+        // 5.2 Job deduplication
+        persistenceService.save(raw, company, platform);
     }
 }
