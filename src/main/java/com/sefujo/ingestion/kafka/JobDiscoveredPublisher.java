@@ -1,8 +1,6 @@
-package com.sefujo.ingestion;
+package com.sefujo.ingestion.kafka;
 
-import com.sefujo.ingestion.dto.CrawlRequestEvent;
 import com.sefujo.ingestion.dto.JobDiscoveredEvent;
-import com.sefujo.ingestion.dto.RawJobPosting;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.sefujo.ingestion;
+package com.sefujo.ingestion.kafka;
 
 import com.sefujo.ingestion.dto.CrawlRequestEvent;
 import lombok.RequiredArgsConstructor;

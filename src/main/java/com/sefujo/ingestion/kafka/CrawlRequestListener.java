@@ -1,14 +1,13 @@
-package com.sefujo.ingestion;
+package com.sefujo.ingestion.kafka;
 
+import com.sefujo.ingestion.JobIngestionService;
 import com.sefujo.ingestion.dto.CrawlRequestEvent;
 import com.sefujo.ingestion.dto.JobDiscoveredEvent;
 import com.sefujo.ingestion.dto.RawJobPosting;
 import com.sefujo.job.source.JobSource;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,6 +1,7 @@
 package com.sefujo.job;
 
 import com.sefujo.ingestion.dto.RawJobPosting;
+import com.sefujo.job.dto.JobPostingResult;
 import com.sefujo.job.entity.Company;
 import com.sefujo.job.entity.Job;
 import com.sefujo.job.entity.JobPosting;
@@ -27,17 +28,22 @@ public class JobPostingPersistenceService {
     JobPostingRepository jobPostingRepository;
 
     @Transactional
-    public void save(
+    public JobPostingResult save(
             RawJobPosting raw,
             Company company,
             Platform platform
     ) {
+        boolean jobExisted = true;
         // 1. Map raw fields into a Job.
         String normalizedTitle = raw.title().toLowerCase();
         String location = raw.location().toLowerCase();
         // Find if job exist ? if no create new, otherwise map to the postings
         Job job = jobRepository.findByCompanyAndNormalizedTitleAndLocation(company, normalizedTitle, location)
-                .orElseGet(() -> createJob(raw));
+                .orElse(null);
+        if(job == null) {
+            jobExisted = false;
+            job = createJob(raw);
+        }
         // 2. Link the Job to the Company.
         job.setCompany(company);
         // 3. Save the Job.
@@ -47,7 +53,10 @@ public class JobPostingPersistenceService {
         // 5. Link the posting to the saved Job and Platform.
         posting.setJob(job);
         // 6. Save the JobPosting.
-        jobPostingRepository.save(posting);
+        return new JobPostingResult(
+                jobExisted,
+                jobPostingRepository.save(posting)
+        );
     }
 
     private JobPosting createJobPosting(RawJobPosting raw, Platform platform) {

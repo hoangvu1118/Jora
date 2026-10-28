@@ -1,15 +1,9 @@
 package com.sefujo.job.controller;
 
-import com.sefujo.ingestion.CrawlRequestPublisher;
-import com.sefujo.ingestion.JobIngestionService;
+import com.sefujo.ingestion.kafka.CrawlRequestPublisher;
 import com.sefujo.ingestion.dto.CrawlRequestEvent;
-import com.sefujo.ingestion.dto.RawJobPosting;
-import com.sefujo.job.source.JobSource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin/ingestion")
