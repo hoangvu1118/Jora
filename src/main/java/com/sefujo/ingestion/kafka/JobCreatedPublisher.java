@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class JobCreatedPublisher {
-    private final KafkaTemplate<Long, JobCreatedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, JobCreatedEvent> kafkaTemplate;
 
     public void publish(JobCreatedEvent jobCreatedEvent) {
-        kafkaTemplate.send("job.created", jobCreatedEvent.jobId(), jobCreatedEvent);
+        kafkaTemplate.send("job.created", String.valueOf(jobCreatedEvent.jobId()), jobCreatedEvent);
     }
 }
