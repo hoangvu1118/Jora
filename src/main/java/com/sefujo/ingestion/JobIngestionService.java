@@ -85,10 +85,4 @@ public class JobIngestionService {
 
         return results;
     }
-
-    public void persistDiscoveredJob(RawJobPosting raw, Platform platform, String companyName) {
-        Company company = findOrCreateCompany(companyName, "");
-        // 5.2 Job deduplication
-        persistenceService.save(raw, company, platform);
-    }
 }
