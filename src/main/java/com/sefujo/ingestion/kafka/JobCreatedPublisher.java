@@ -11,6 +11,6 @@ public class JobCreatedPublisher {
     private final KafkaTemplate<String, JobCreatedEvent> kafkaTemplate;
 
     public void publish(JobCreatedEvent jobCreatedEvent) {
-        kafkaTemplate.send("job.created", String.valueOf(jobCreatedEvent.jobId()), jobCreatedEvent);
+        kafkaTemplate.send("job.created", String.valueOf(jobCreatedEvent.jobId()), jobCreatedEvent).join();
     }
 }

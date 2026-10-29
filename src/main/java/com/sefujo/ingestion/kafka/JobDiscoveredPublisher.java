@@ -11,7 +11,7 @@ public class JobDiscoveredPublisher {
     private final KafkaTemplate<String, JobDiscoveredEvent> kafkaTemplate;
 
     public void publish(JobDiscoveredEvent event) {
-        kafkaTemplate.send("job.discovered", event.platform() + ":" + event.job().externalId(), event);
+        kafkaTemplate.send("job.discovered", event.platform() + ":" + event.job().externalId(), event).join();
 //                                  topic                              key                            value
     }
 }
