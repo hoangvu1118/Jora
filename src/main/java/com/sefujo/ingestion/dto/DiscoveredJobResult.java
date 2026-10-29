@@ -1,7 +1,7 @@
 package com.sefujo.ingestion.dto;
 
 public record DiscoveredJobResult(
-        boolean publishedJobCreated,
+        boolean shouldPublish,
         Long jobId
 ) {
 }

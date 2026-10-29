@@ -42,7 +42,7 @@ public class JobDiscoveredPersistService {
             // Same job but from another posting -> no job.created
             return new DiscoveredJobResult(false, null);
         }
-        return new DiscoveredJobResult(true, saved.jobPosting().getId());
+        return new DiscoveredJobResult(true, saved.jobPosting().getJob().getId());
     }
 
     public JobPostingResult persistDiscoveredJob(RawJobPosting raw, Platform platform, String companyName) {
