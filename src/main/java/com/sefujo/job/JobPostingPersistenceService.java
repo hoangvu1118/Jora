@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -97,6 +98,10 @@ public class JobPostingPersistenceService {
                                 Function.identity()
                         ));
         return postingMap;
+    }
+
+    public Optional<JobPosting> findExistingPosting(Platform platform, String externalId) {
+        return jobPostingRepository.findByPlatformAndExternalJobId(platform, externalId);
     }
 
     public void markSeen(JobPosting existing) {
