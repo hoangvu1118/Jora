@@ -40,5 +40,10 @@ services:               # The list of container
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
     depends_on:
       - kafka
+
+  redis:
+    image: redis:7.4
+    ports:
+      - "6379:6379"
 volumes:
   postgres_data:        # declare the named volume used above
