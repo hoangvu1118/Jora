@@ -31,4 +31,6 @@ public interface JobRecommendationRepository extends JpaRepository<JobRecommenda
     """)
     List<JobRecommendation> findNextPage(long searchProfileId, Limit limit, int lastScore, long lastId);
 
+    List<JobRecommendation> findByJobId(Long jobId);
+
 }

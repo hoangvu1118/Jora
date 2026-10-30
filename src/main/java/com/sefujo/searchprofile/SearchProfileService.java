@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -122,4 +123,7 @@ public class SearchProfileService {
         searchProfileRepository.delete(profile);
     }
 
+    public List<SearchProfile> getAllSearchProfiles() {
+        return searchProfileRepository.findAll();
+    }
 }

@@ -23,7 +23,6 @@ public class JobRecommendation {
     @JoinColumn(name="job_id")
     private Job job;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="search_profile_id")
     private SearchProfile searchProfile;

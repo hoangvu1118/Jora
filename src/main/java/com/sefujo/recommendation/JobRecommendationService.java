@@ -1,6 +1,7 @@
 package com.sefujo.recommendation;
 
 import com.sefujo.common.exception.ResourceNotFound;
+import com.sefujo.job.JobService;
 import com.sefujo.job.dto.JobSummaryResponse;
 import com.sefujo.job.entity.Job;
 import com.sefujo.recommendation.dto.JobRecommendGenerationResponse;
@@ -28,7 +29,7 @@ public class JobRecommendationService {
     private final JobMatchingStrategy jobMatchingStrategy;
     private final SearchProfileService searchProfileService;
     private final UserService userService;
-
+    private final JobService jobService;
     @Value("${job.matchScore.threshold}")
     private int jobScoreThreshold;
 
@@ -37,6 +38,14 @@ public class JobRecommendationService {
                 .orElseThrow(() -> new ResourceNotFound("Recommendation not found with id " + recommendationId));
         jobRecommendation.setStatus(newStatus);
         jobRecommendationRepository.save(jobRecommendation);
+    }
+
+    private JobRecommendation toJobRecommendation(SearchProfile searchProfile, Job job) {
+        JobRecommendation jobRecommendation =  new JobRecommendation();
+        jobRecommendation.setSearchProfile(searchProfile);
+        jobRecommendation.setJob(job);
+        jobRecommendation.setStatus(RecommendationStatus.NEW);
+        return jobRecommendation;
     }
 
     @Transactional
@@ -60,10 +69,7 @@ public class JobRecommendationService {
             }
             JobRecommendation jobRecommendation = existingByJobId.get(job.getId());
             if (jobRecommendation == null) {
-                jobRecommendation =  new JobRecommendation();
-                jobRecommendation.setSearchProfile(searchProfile);
-                jobRecommendation.setJob(job);
-                jobRecommendation.setStatus(RecommendationStatus.NEW);
+                jobRecommendation =  toJobRecommendation(searchProfile, job);
             }
             jobRecommendation.setMatchScore(result.getScore());
             jobRecommendation.setMatchReasons(result.getReasons());
@@ -122,4 +128,37 @@ public class JobRecommendationService {
 
     }
 
+    @Transactional
+    public int recommendForNewJob(Long jobId){
+        Job job = jobService.getJob(jobId);
+        if(job == null || !job.getStatus().equalsIgnoreCase("open")){
+            return 0;
+        }
+        List<SearchProfile> allSearchProfiles = searchProfileService.getAllSearchProfiles();
+        if(allSearchProfiles == null || allSearchProfiles.isEmpty()){
+            return 0;
+        }
+        Map<Long, JobRecommendation> existingRecForJob = jobRecommendationRepository.findByJobId(jobId)
+                .stream()
+                .collect(Collectors.toMap(rec -> rec.getSearchProfile().getId(), rec -> rec));
+
+        List<JobRecommendation> toSave = new ArrayList<>();
+
+        for(SearchProfile profile : allSearchProfiles){
+            MatchResult result = jobMatchingStrategy.score(profile, job);
+            if (result.getScore() < jobScoreThreshold) {
+                continue;
+            }
+            // check if recommendation exist for the job, profile
+            JobRecommendation jobRecommendation = existingRecForJob.get(profile.getId());
+            if (jobRecommendation == null) {
+                jobRecommendation =  toJobRecommendation(profile, job);
+            }
+            jobRecommendation.setMatchScore(result.getScore());
+            jobRecommendation.setMatchReasons(result.getReasons());
+            toSave.add(jobRecommendation);
+        }
+        jobRecommendationRepository.saveAllAndFlush(toSave);
+        return toSave.size();
+    }
 }

@@ -82,7 +82,6 @@ public class JobIngestionService {
                     source.fetchJobDetail(companyName, summary.externalId());
             results.add(raw);
         }
-
         return results;
     }
 }

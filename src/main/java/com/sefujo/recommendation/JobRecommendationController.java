@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class JobRecommendationController {
     private final JobRecommendationService jobRecommendationService;
-    private final UserService userService;
-    private final SearchProfileService searchProfileService;
 
     @PostMapping
     public ResponseEntity<JobRecommendGenerationResponse> generateJobRecommendation() {

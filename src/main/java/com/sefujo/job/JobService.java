@@ -91,6 +91,10 @@ public class JobService {
         return response;
     }
 
+    public Job getJob(long id) {
+        return jobRepository.findById(id)
+                .orElse(null);
+    }
 
 
 }
