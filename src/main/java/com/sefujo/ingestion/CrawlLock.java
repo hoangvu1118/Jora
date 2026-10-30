@@ -14,8 +14,12 @@ public class CrawlLock {
     private static final Duration COOLDOWN = Duration.ofMinutes(30);
     private final StringRedisTemplate redisTemplate;
 
+    private String formKey(String platform, String token) {
+        return "crawl:" + platform + ":" + token;
+    }
+
     public boolean tryAcquire(String platform, String token) {
-        String lockKey = "crawl:" + platform + ":" + token;
+        String lockKey = formKey(platform, token);
         // setIfAbsent -> SET key value NX EX : only if it does not have before
         // Redis store record as "KEY:VALUE" pair
         Boolean acquired = redisTemplate.opsForValue().setIfAbsent(lockKey, Instant.now().toString(), COOLDOWN);
@@ -23,6 +27,7 @@ public class CrawlLock {
     }
 
     public void release(String platform, String boardToken) {
-        redisTemplate.delete("crawl:" + platform + ":" + boardToken);
+        String lockKey = formKey(platform, boardToken);
+        redisTemplate.delete(lockKey);
     }
 }
