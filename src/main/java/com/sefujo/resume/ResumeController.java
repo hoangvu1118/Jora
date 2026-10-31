@@ -69,8 +69,6 @@ public class ResumeController {
         return ResponseEntity.noContent().build();
     }
 
-
-    // TODO: give Redis lock 10 times per minute
     @PostMapping("/{resumeId}/tailor/{jobId}")
     public ResponseEntity<ResumeVersionBriefResponse> tailorResume(
             @PathVariable long resumeId, @PathVariable long jobId) {

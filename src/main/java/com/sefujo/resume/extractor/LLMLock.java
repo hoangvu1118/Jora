@@ -8,12 +8,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LLMLock {
     private final RateLimiterService rateLimiterService;
-    private String serviceNameRatelimit = "llm4Resume";
-    private int maxRequests = 10;
-    private int windowSeconds = 60;
+    private static final String serviceNameRatelimit = "llm4Resume";
+    private static final int maxRequests = 10;
+    private static final int windowSeconds = 60;
 
     public boolean allowLLMRequest(Long userId){
-        return rateLimiterService.allowRequest(serviceNameRatelimit, userId, maxRequests, windowSeconds);
+        String userIdString = String.valueOf(userId);
+        return rateLimiterService.allowRequest(serviceNameRatelimit, userIdString, maxRequests, windowSeconds);
     }
 
 }

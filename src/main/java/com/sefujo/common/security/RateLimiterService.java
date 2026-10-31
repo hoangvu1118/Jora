@@ -13,20 +13,19 @@ public class RateLimiterService {
     private final StringRedisTemplate redisTemplate;
     private final RedisScript<Long> rateLimitScript;
 
-    private String formulateKey(String service, String userId){
+    private String formulateKey(String service, String uniqueId){
         // e.g ratelimit:llm:12345 or ratelimit:auth:12345
-        return "ratelimit:" + service + ":" + userId;
+        return "ratelimit:" + service + ":" + uniqueId;
     }
 
     /**
-     * @param userId Unique identifier for the client/IP
+     * @param uniqueId Unique identifier for the client/IP can be userId or email
      * @param maxRequests Maximum allowed requests per window (e.g., 10)
      * @param windowSeconds Window length in seconds (e.g., 60)
      * @return true if allowed, false if rate limited
      */
-    public boolean allowRequest(String service, Long userId, int maxRequests, int windowSeconds){
-        String userIdString = String.valueOf(userId);
-        String key = formulateKey(service, userIdString);
+    public boolean allowRequest(String service, String uniqueId, int maxRequests, int windowSeconds){
+        String key = formulateKey(service, uniqueId);
         Long result = redisTemplate.execute(
                 rateLimitScript,
                 Collections.singletonList(key),

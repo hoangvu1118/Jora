@@ -4,6 +4,7 @@ import com.sefujo.auth.dto.LoginRequest;
 import com.sefujo.auth.dto.RegisterRequest;
 import com.sefujo.common.exception.EmailAlreadyExistsException;
 import com.sefujo.common.exception.InvalidCredentialException;
+import com.sefujo.common.exception.RateLimitException;
 import com.sefujo.common.exception.UserNotAuthenticated;
 import com.sefujo.common.security.CustomUserDetail;
 import com.sefujo.common.security.CustomUserDetailService;
@@ -26,13 +27,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 @AllArgsConstructor
 public class AuthService {
     private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailService userDetailsService;
+    private final AuthLimitLock authLimitLock;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse authenticate(LoginRequest loginRequest) {
         Authentication authentication;
+        if(!authLimitLock.allowAuthRequest(loginRequest.getEmail())){
+            throw new RateLimitException("");
+        }
         try {
              authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())

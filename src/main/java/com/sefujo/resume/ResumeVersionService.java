@@ -16,8 +16,6 @@ import com.sefujo.resume.extractor.ResumeContentParser;
 import com.sefujo.resume.extractor.ResumeTailor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -43,13 +41,14 @@ public class ResumeVersionService {
 
     public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
 
-        if(!llmlock.allowLLMRequest(userId)) {
-            throw new RateLimitException("Too many Requests");
-        }
         Resume resume = resumeService.getActiveResume(userId, resumeId);
 
         String rawText = resumeService.retrieveRawResume(resume);
         // Call Gemini for the reformat resume
+        if(!llmlock.allowLLMRequest(userId)) {
+            throw new RateLimitException("Too many Requests");
+        }
+
         ResumeContent resumeContent = resumeContentParser.parse(rawText);
 
         ResumeVersion newVersion;
