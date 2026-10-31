@@ -34,4 +34,8 @@ public class RateLimiterService {
         );
         return result != null && result == 1L;
     }
+
+    public void release(String service, String email){
+        redisTemplate.delete(formulateKey(service, email));
+    }
 }

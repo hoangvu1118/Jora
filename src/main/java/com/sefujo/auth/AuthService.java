@@ -9,6 +9,7 @@ import com.sefujo.common.exception.UserNotAuthenticated;
 import com.sefujo.common.security.CustomUserDetail;
 import com.sefujo.common.security.CustomUserDetailService;
 import com.sefujo.common.security.JwtTokenProvider;
+import com.sefujo.common.security.RateLimiterService;
 import com.sefujo.user.User;
 import com.sefujo.user.UserRepository;
 import com.sefujo.user.UserResponse;
@@ -44,6 +45,8 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new InvalidCredentialException("Invalid email or password");
         }
+        // Release after successful login
+        authLimitLock.release(loginRequest.getEmail());
 
         CustomUserDetail userDetails = (CustomUserDetail) authentication.getPrincipal();
         if (userDetails == null) {

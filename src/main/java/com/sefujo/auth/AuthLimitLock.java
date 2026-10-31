@@ -15,4 +15,7 @@ public class AuthLimitLock {
     public boolean allowAuthRequest(String email){
         return rateLimiterService.allowRequest(serviceNameRatelimit, email, maxRequests, windowSeconds);
     }
+    public void release(String email){
+        rateLimiterService.release(serviceNameRatelimit, email);
+    }
 }

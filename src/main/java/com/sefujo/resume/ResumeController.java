@@ -1,10 +1,8 @@
 package com.sefujo.resume;
 
-import com.sefujo.common.security.RateLimiterService;
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.TailoredResult;
 import com.sefujo.resume.dto.UploadResumeResponse;
-import com.sefujo.resume.extractor.LLMLock;
 import com.sefujo.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Optional;
 
