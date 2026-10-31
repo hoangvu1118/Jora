@@ -15,6 +15,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(RateLimitException.class)
+    public ProblemDetail handleRateLimitException(RateLimitException ex) {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.TOO_MANY_REQUESTS,
+                "The user sent too many request under time-allowed window");
+    }
+
     @ExceptionHandler(InvalidCredentialException.class)
     public ProblemDetail handleInvalidCredentialException(InvalidCredentialException e) {
         return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED,

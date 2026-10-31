@@ -1,8 +1,10 @@
 package com.sefujo.resume;
 
+import com.sefujo.common.security.RateLimiterService;
 import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.TailoredResult;
 import com.sefujo.resume.dto.UploadResumeResponse;
+import com.sefujo.resume.extractor.LLMLock;
 import com.sefujo.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,10 +43,13 @@ public class ResumeController {
     @PostMapping("/{resumeId}/versions")
     public ResponseEntity<ResumeVersionBriefResponse> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
+
+
         Optional<ResumeVersionBriefResponse> existing = resumeVersionService.findBaseResume(userId, resumeId);
-        if(existing.isPresent()) {
+        if(existing.isPresent()) { // Fail if Option.empty()
             return  ResponseEntity.status(HttpStatus.OK).body(existing.get());
         }
+
         // Call LLM to create a BASE version out of rawText
         ResumeVersionBriefResponse response = resumeVersionService.createResumeVersion(userId, resumeId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -64,6 +69,8 @@ public class ResumeController {
         return ResponseEntity.noContent().build();
     }
 
+
+    // TODO: give Redis lock 10 times per minute
     @PostMapping("/{resumeId}/tailor/{jobId}")
     public ResponseEntity<ResumeVersionBriefResponse> tailorResume(
             @PathVariable long resumeId, @PathVariable long jobId) {

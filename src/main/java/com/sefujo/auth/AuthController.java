@@ -20,6 +20,8 @@ public class AuthController {
     private AuthService authService;
     private UserService userService;
 
+
+    // TODO: give Redis lock 5 times per 15 minute
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest){
         AuthResponse response = authService.authenticate(loginRequest);

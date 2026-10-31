@@ -1,6 +1,7 @@
 package com.sefujo.resume;
 
 import com.sefujo.common.exception.ConflictException;
+import com.sefujo.common.exception.RateLimitException;
 import com.sefujo.common.exception.ResourceNotFound;
 import com.sefujo.job.entity.Job;
 import com.sefujo.job.repository.JobRepository;
@@ -10,10 +11,13 @@ import com.sefujo.resume.dto.ResumeVersionBriefResponse;
 import com.sefujo.resume.dto.TailoredResult;
 import com.sefujo.resume.entity.Resume;
 import com.sefujo.resume.entity.ResumeVersion;
+import com.sefujo.resume.extractor.LLMLock;
 import com.sefujo.resume.extractor.ResumeContentParser;
 import com.sefujo.resume.extractor.ResumeTailor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -26,6 +30,7 @@ public class ResumeVersionService {
     private final JobRepository jobRepository;
     private final ResumeContentParser resumeContentParser;
     private final ResumeTailor resumeTailor;
+    private final LLMLock llmlock;
 
     private ResumeVersionBriefResponse toResumeVersionBriefResponse(ResumeVersion version) {
         return new ResumeVersionBriefResponse(
@@ -37,6 +42,10 @@ public class ResumeVersionService {
     }
 
     public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
+
+        if(!llmlock.allowLLMRequest(resumeId)) {
+            throw new RateLimitException("Too many Requests");
+        }
         Resume resume = resumeService.getActiveResume(userId, resumeId);
 
         String rawText = resumeService.retrieveRawResume(resume);
@@ -110,6 +119,10 @@ public class ResumeVersionService {
                 content.skillGroups()
         );
         String description = job.getDescription();
+
+        if(!llmlock.allowLLMRequest(resumeId)) {
+            throw new RateLimitException("Too many Requests");
+        }
 
         TailorSection processedSection = resumeTailor.tailorSections(description, tailorSection);
         ResumeContent processedContent = toResumeContent(content, processedSection);
