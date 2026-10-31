@@ -2,6 +2,7 @@ package com.sefujo.storage;
 
 import com.sefujo.common.exception.FileStorageException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Component
+@ConditionalOnProperty(name = "storage.type", havingValue = "local", matchIfMissing = true)
 public class LocalFileStorage implements FileStorage{
 
     private final Path rootFolder;

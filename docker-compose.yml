@@ -4,9 +4,9 @@ services:               # The list of container
     image: postgres:17  # what to run, downloaded from Docker Hub
     container_name: jora-db # The name for Container itself -> See when check "docker ps"
     environment:        # Setting for the container
-      POSTGRES_DB: sefujo
-      POSTGRES_USER: hvu
-      POSTGRES_PASSWORD: 11182005
+      POSTGRES_DB: jora
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "5432:5432"     # "your laptop port : container port"
     volumes:
@@ -54,13 +54,18 @@ services:               # The list of container
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sefujo
+      SPRING_DATASOURCE_URL: ${DATASOURCE_URL}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       SPRING_DATA_REDIS_HOST: redis
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      STORAGE_TYPE: ${STORAGE_TYPE}
+      S3_BUCKET: ${S3_BUCKET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
 
     depends_on:
       - postgres
