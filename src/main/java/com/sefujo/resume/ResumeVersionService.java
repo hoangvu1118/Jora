@@ -43,7 +43,7 @@ public class ResumeVersionService {
 
     public ResumeVersionBriefResponse createResumeVersion(Long userId, Long resumeId) {
 
-        if(!llmlock.allowLLMRequest(resumeId)) {
+        if(!llmlock.allowLLMRequest(userId)) {
             throw new RateLimitException("Too many Requests");
         }
         Resume resume = resumeService.getActiveResume(userId, resumeId);
@@ -120,7 +120,7 @@ public class ResumeVersionService {
         );
         String description = job.getDescription();
 
-        if(!llmlock.allowLLMRequest(resumeId)) {
+        if(!llmlock.allowLLMRequest(userId)) {
             throw new RateLimitException("Too many Requests");
         }
 
