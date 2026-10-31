@@ -1,7 +1,8 @@
+name: jora
 services:               # The list of container
   postgres:             # a name to choose for this container --> internal name (Docker DNS) / Service Name
     image: postgres:17  # what to run, downloaded from Docker Hub
-    container_name: sefujo-db # The name for Container itself -> See when check "docker ps"
+    container_name: jora-db # The name for Container itself -> See when check "docker ps"
     environment:        # Setting for the container
       POSTGRES_DB: sefujo
       POSTGRES_USER: hvu
@@ -13,7 +14,7 @@ services:               # The list of container
 
   kafka:
     image: apache/kafka:4.1.0
-    container_name: sefujo-kafka
+    container_name: jora-kafka
     ports:
       - "9092:9092"
     environment:
@@ -32,7 +33,7 @@ services:               # The list of container
 
   kafka-ui:
     image: kafbat/kafka-ui:v1.2.0
-    container_name: sefujo-kafka-ui
+    container_name: jora-kafka-ui
     ports:
       - "8081:8080"
     environment:
@@ -43,7 +44,30 @@ services:               # The list of container
 
   redis:
     image: redis:7.4
+    container_name: jora-redis
     ports:
       - "6379:6379"
+
+  jora:
+    build: .
+    container_name: jora-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/sefujo
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_DATA_REDIS_HOST: redis
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+
+    depends_on:
+      - postgres
+      - kafka
+      - redis
+    restart: on-failure # try again if postgres wasnot ready yet
+
 volumes:
-  postgres_data:        # declare the named volume used above
+  postgres_data:
+    name: jora_postgres_data       # declare the named volume used above

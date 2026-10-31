@@ -37,6 +37,9 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.OK).body(rawText);
     }
 
+    /*
+    Create a base version for a resume
+    */
     @PostMapping("/{resumeId}/versions")
     public ResponseEntity<ResumeVersionBriefResponse> structureVersion(@PathVariable long resumeId) {
         long userId = userService.getCurrentUserId();
