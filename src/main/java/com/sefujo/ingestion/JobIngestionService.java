@@ -48,7 +48,7 @@ public class JobIngestionService {
 
     public List<RawJobPosting> ingest(
             JobSource source,
-            String companyName // the company name
+            String companyName
     ) {
         List<RawJobSummary> summaries =
                 source.fetchJobSummaries(companyName);

@@ -5,6 +5,8 @@ import com.sefujo.searchprofile.WorkplaceType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -43,9 +45,11 @@ public class Job {
     @Column(name = "experience_level")
     private String level;
 
+    @CreationTimestamp
     @Column(name="created_at")
     private LocalDateTime createdDate;
 
+    @UpdateTimestamp
     @Column(name="updated_at")
     private LocalDateTime updatedDate;
 
