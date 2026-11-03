@@ -24,7 +24,7 @@ public class GreenhouseJobSource implements JobSource {
 
     @Override
     public String platformName() {
-        return "Greenhouse";
+        return "greenhouse";
     }
 
     @Override
